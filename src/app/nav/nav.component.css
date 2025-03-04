@@ -1,3 +1,19 @@
-.container {
+.navbar-custom {
+    border-top: 2px solid white;  /* Adds a line at the top */
+    border-bottom: 2px solid white; /* Adds a line at the bottom */
+    background-color: black; /* Light gray background */
+    padding: 10px 0;
+}
 
+
+.nav {
+    display: flex;
+    justify-content: center; /* Center the nav items */
+    gap: 20px; /* Space between items */
+}
+
+.nav-link {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
