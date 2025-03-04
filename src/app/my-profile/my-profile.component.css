@@ -1,0 +1,24 @@
+.profile-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.profile-name {
+    font-size: 24px;
+    color: pink;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    background-color: gray;
+    border-radius: 50%;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+
+.profile-details p {
+    font-size: 18px;
+    margin: 5px 0;
+}
