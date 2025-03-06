@@ -1,5 +1,48 @@
-.jumbotron {
+/* .header {
     padding: 1rem 1rem;
     text-align: center;
 
+}
+
+.title {
+    color: pink;
+    font-size: 24px;
+}
+
+.profile-link {
+    text-decoration: none;
+}
+
+.profile-icon {
+    font-size: 32px;
+    color: pink;
+}
+
+ */
+
+
+ .header {
+    padding: 1rem 1rem;
+    text-align: center;
+    position: relative; /* Allows absolute positioning of profile icon */
+    display: flex;
+    justify-content: center; /* Centers the text */
+    align-items: center;
+}
+
+.profile-link {
+    position: absolute;
+    right: 20px; /* Adjust distance from right */
+    top: 50%;
+    transform: translateY(-50%); /* Centers vertically */
+    text-decoration: none;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    border: 2px solid pink;
+    cursor: pointer;
 }
