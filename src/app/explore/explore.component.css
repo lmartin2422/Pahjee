@@ -1,0 +1,26 @@
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.search-category {
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
+}
+
+.search-category label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.search-category select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid pink;
+    border-radius: 5px;
+}

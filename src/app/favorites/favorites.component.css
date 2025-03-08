@@ -1,0 +1,21 @@
+.favorites-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+}
+
+.box {
+    width: 150px;  /* Adjust as needed */
+    height: 200px; /* Adjust as needed */
+    background-color: grey;
+    border-radius: 10px;
+}
+
+
