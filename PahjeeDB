@@ -1,0 +1,24 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,        -- Unique user ID
+    username TEXT UNIQUE NOT NULL, -- Unique username
+    email TEXT UNIQUE NOT NULL,   -- Unique email
+    password_hash TEXT NOT NULL,  -- Store hashed passwords
+    profile_picture TEXT,         -- URL/path to profile picture
+    bio TEXT,                     -- User bio
+    gender VARCHAR(10),           -- Gender (e.g., Male, Female, Other)
+    birthdate DATE,               -- Date of birth
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp of account creation
+);
+
+
+
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,        -- Unique message ID
+    sender_id INTEGER NOT NULL,   -- User who sent the message
+    recipient_id INTEGER NOT NULL, -- User who received the message
+    content TEXT NOT NULL,        -- Message content
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp of when the message was sent
+    is_read BOOLEAN DEFAULT FALSE, -- Whether the message has been read
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE
+);
