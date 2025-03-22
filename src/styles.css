@@ -1,5 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: black; /* Sets the background to black */
+    color: pink; /* Sets all text color to pink */
+}
 
+/* Ensure all links are also pink */
+a {
+    color: pink;
+    text-decoration: none;
+}
+
+a:hover {
+    color: lightpink; /* Slightly different shade on hover */
+}
+
+/* If you have specific containers that need this styling */
+.container {
+    color: pink; /* Ensures all text inside containers remains pink */
 }
