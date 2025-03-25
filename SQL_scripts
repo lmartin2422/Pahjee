@@ -1,0 +1,17 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,        -- Unique user ID
+    username TEXT UNIQUE NOT NULL, -- Unique username
+    email TEXT UNIQUE NOT NULL,   -- Unique email
+    password_hash TEXT NOT NULL,  -- Store hashed passwords
+    firstname TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    profile_picture TEXT,         -- URL/path to profile picture
+    location TEXT NOT NULL,
+    bio TEXT,                     -- User bio
+    gender VARCHAR(10),           -- Gender (e.g., Male, Female, Other)
+    birthdate DATE,               -- Date of birth
+    lookingfor TEXT,
+    sexualorientation TEXT,
+    ProfessionIndustry TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp of account creation
+);
