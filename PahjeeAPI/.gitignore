@@ -1,0 +1,25 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environments
+venv/
+env/
+PahjeeAPI-env/
+
+# VS Code settings
+.vscode/
+
+# Secrets
+.env
+
+# Logs
+*.log
+
+# Coverage
+.coverage
+htmlcov/
+
+# System
+.DS_Store
+Thumbs.db
