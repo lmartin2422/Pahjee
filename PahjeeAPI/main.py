@@ -1,10 +1,16 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+
 import hashlib
 import models
 import schemas
 import database
+
+import bcrypt
+
 
 
 app = FastAPI()
@@ -21,12 +27,15 @@ def get_db():
     finally:
         db.close()
 
+# Allows Angular to call the FASTAPI backend w/o CORS errors
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],  # Angular default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# # Define a Pydantic model for user data validation
-# class User(BaseModel):
-#     username: str
-#     email: str
-#     password: str
 
 
 # GET request
@@ -101,7 +110,6 @@ def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = De
 
 
 # DELETE request
-
 @app.delete("/users/{user_id}", status_code=204)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
