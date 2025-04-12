@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
@@ -12,10 +13,10 @@ import { HttpClient } from '@angular/common/http';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private router: Router, private http: HttpClient) {
     this.loginForm = this.fb.group({
-      username: [''],
-      password: ['']
+      username: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
@@ -24,11 +25,16 @@ export class LoginComponent {
       next: (res: any) => {
         alert('Login successful!');
         console.log(res);
-        // Store token or user ID here
+        localStorage.setItem('userId', res.user_id); // ✅ Store ID
+        this.router.navigate(['/my-profile']);        // ✅ Redirect
       },
       error: () => {
         alert('Login failed');
       }
     });
+  }
+
+  goToSignup() {
+    this.router.navigate(['/signup']);
   }
 }

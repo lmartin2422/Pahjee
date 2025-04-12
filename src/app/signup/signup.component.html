@@ -1,0 +1,20 @@
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <label>Username: <input formControlName="username"></label>
+    <label>Email: <input type="email" formControlName="email"></label>
+    <label>Password: <input type="password" formControlName="password"></label>
+  
+    <!-- Optional fields -->
+    <label>First Name: <input formControlName="firstname"></label>
+    <label>Last Name: <input formControlName="lastname"></label>
+    <label>Profile Picture URL: <input formControlName="profile_picture"></label>
+    <label>Location: <input formControlName="location"></label>
+    <label>Bio: <textarea formControlName="bio"></textarea></label>
+    <label>Gender: <input formControlName="gender"></label>
+    <label>Birthdate: <input type="date" formControlName="birthdate"></label>
+    <label>Looking For: <input formControlName="lookingfor"></label>
+    <label>Sexual Orientation: <input formControlName="sexualorientation"></label>
+    <label>Profession/Industry: <input formControlName="professionindustry"></label>
+  
+    <button type="submit">Sign Up</button>
+  </form>
+  

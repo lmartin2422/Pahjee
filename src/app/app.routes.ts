@@ -8,18 +8,20 @@ import { HeaderComponent } from './header/header.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { NgModule } from '@angular/core';
 import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './signup/signup.component';
 
 
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
+    { path: 'signup', component: SignupComponent },
     { path: 'home', component: HomeComponent} ,
     { path: 'messages', component: DirectMessagesComponent},
     { path: 'explore', component: ExploreComponent},
     { path: 'favorites', component: FavoritesComponent},
     { path: 'myprofile', component: MyProfileComponent},
-    { path: '', redirectTo: '/home', pathMatch: 'full' }, // default route
-    { path: '**', redirectTo: '/home', pathMatch: 'full' } // invali
+    { path: '', component: LoginComponent },
+    { path: '**', redirectTo: '/home', pathMatch: 'full' } // invalid
 ];
 
 
