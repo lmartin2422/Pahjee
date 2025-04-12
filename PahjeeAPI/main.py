@@ -49,6 +49,15 @@ def get_users(db: Session = Depends(get_db)):
     return users
 
 
+# POST request for login
+@app.post("/login")
+def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.username == request.username).first()
+    if user and bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
+        return {"message": "Login successful", "user_id": user.id}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
+
+
 # POST request for user registration
 @app.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):

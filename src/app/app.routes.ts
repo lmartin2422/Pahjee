@@ -7,9 +7,12 @@ import { FavoritesComponent } from './favorites/favorites.component';
 import { HeaderComponent } from './header/header.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { NgModule } from '@angular/core';
+import { LoginComponent } from './login/login.component';
+
 
 
 export const routes: Routes = [
+    { path: 'login', component: LoginComponent },
     { path: 'home', component: HomeComponent} ,
     { path: 'messages', component: DirectMessagesComponent},
     { path: 'explore', component: ExploreComponent},

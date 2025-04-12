@@ -35,7 +35,6 @@ class UserResponse(BaseModel):
     created_at: datetime
 
 
-
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
@@ -50,6 +49,11 @@ class UserUpdate(BaseModel):
     lookingfor: Optional[str] = None
     sexualorientation: Optional[str] = None
     professionindustry: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
     class Config:
         orm_mode = True
