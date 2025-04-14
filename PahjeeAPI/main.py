@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from passlib.context import CryptContext
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
+import psycopg2
 
 import hashlib
 import models
@@ -57,13 +60,9 @@ def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
         return {"message": "Login successful", "user_id": user.id}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
-
 # POST request for user registration
 @app.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Hash the password
-    hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
-
     # Check if user already exists
     existing_user = db.query(models.User).filter(
         (models.User.email == user.email) | (models.User.username == user.username)
@@ -71,6 +70,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if existing_user:
         raise HTTPException(status_code=400, detail="Username or email already registered")
 
+    # Hash the password with bcrypt
+    hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    
     # Create a new User instance
     new_user = models.User(
         username=user.username,

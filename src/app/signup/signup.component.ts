@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors  } from '@angular/forms';
 import { UserService } from '../../services/user.service';  // Update path if needed
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class SignupComponent {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+      retypePassword: ['', Validators.required],
       firstname: [''],
       lastname: [''],
       profile_picture: [''],
@@ -32,11 +33,27 @@ export class SignupComponent {
       lookingfor: [''],
       sexualorientation: [''],
       professionindustry: ['']
-    });
+    },
+    { validators: this.passwordsMatchValidator }
+  );
+  }
+
+  passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const confirm = group.get('retypePassword')?.value;
+    return password === confirm ? null : { passwordMismatch: true };
   }
 
   onSubmit() {
     if (this.signupForm.valid) {
+      this.signupForm.markAllAsTouched();
+      return;
+    }
+  
+    // Check password mismatch
+    if (this.signupForm.errors?.['passwordMismatch']) {      alert('Passwords do not match!');
+      return;
+    }
       this.userService.registerUser(this.signupForm.value).subscribe({
         next: (res) => {
           alert('Registration successful!');
@@ -48,4 +65,4 @@ export class SignupComponent {
       });
     }
   }
-}
+
