@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors  } from '@angular/forms';
-import { UserService } from '../../services/user.service';  // Update path if needed
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';  // Ensure ReactiveFormsModule is imported
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';  // Import CommonModule for standalone component support
+
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule], // Make sure this line is present
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
@@ -18,42 +20,25 @@ export class SignupComponent {
     private userService: UserService,
     private router: Router
   ) {
-    this.signupForm = this.fb.group({
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      retypePassword: ['', Validators.required],
-      firstname: [''],
-      lastname: [''],
-      profile_picture: [''],
-      location: [''],
-      bio: [''],
-      gender: [''],
-      birthdate: [''],
-      lookingfor: [''],
-      sexualorientation: [''],
-      professionindustry: ['']
-    },
-    { validators: this.passwordsMatchValidator }
-  );
+    this.signupForm = this.fb.group(
+      {
+        username: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required],
+        confirmPassword: ['', Validators.required]
+      },
+      { validators: this.passwordsMatchValidator }
+    );
   }
 
   passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
-    const confirm = group.get('retypePassword')?.value;
+    const confirm = group.get('confirmPassword')?.value;
     return password === confirm ? null : { passwordMismatch: true };
   }
 
   onSubmit() {
     if (this.signupForm.valid) {
-      this.signupForm.markAllAsTouched();
-      return;
-    }
-  
-    // Check password mismatch
-    if (this.signupForm.errors?.['passwordMismatch']) {      alert('Passwords do not match!');
-      return;
-    }
       this.userService.registerUser(this.signupForm.value).subscribe({
         next: (res) => {
           alert('Registration successful!');
@@ -63,6 +48,8 @@ export class SignupComponent {
           alert('Registration failed: ' + err.error.detail);
         }
       });
+    } else {
+      alert('Please check the form for errors.');
     }
   }
-
+}

@@ -14,21 +14,24 @@
   
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <label>
-        Username
+        Username <span class="required">*</span>
         <input formControlName="username" type="text" placeholder="Enter your username" />
       </label>
   
       <label>
-        Password
+        Password <span class="required">*</span>
         <input formControlName="password" type="password" placeholder="Enter your password" />
       </label>
   
-      <button type="submit" class="login-button">Login</button>
+      <!-- Show error message -->
+      <div *ngIf="loginError" class="error-message">{{ loginError }}</div>
+  
+      <button type="submit" [disabled]="loginForm.invalid">Login</button>
     </form>
   
-    <div class="signup-link">
-      <p>Don't have an account?</p>
+    <p class="signup-link">
+      Don't have an account?
       <button (click)="goToSignup()">Create Account</button>
-    </div>
+    </p>
   </div>
   

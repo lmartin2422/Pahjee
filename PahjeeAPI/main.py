@@ -15,22 +15,25 @@ import database
 import bcrypt
 
 
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from passlib.context import CryptContext
+from pydantic import BaseModel, EmailStr
+from sqlalchemy.orm import Session
+import models
+import schemas
+import database
+import bcrypt
 
 app = FastAPI()
 
-# Initialize the database
+# Password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Create database tables
 models.Base.metadata.create_all(bind=database.engine)
 
-
-# Dependency to get the database session
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# Allows Angular to call the FASTAPI backend w/o CORS errors
+# CORS: Allow Angular frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4200"],  # Angular default port
@@ -39,42 +42,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Dependency to get database session
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
+# ===== ROUTES =====
 
-# GET request
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Pahjee API"}
 
+# Get all users (optional)
 @app.get("/users", response_model=list[schemas.UserResponse])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
 
-
-# POST request for login
-@app.post("/login")
-def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == request.username).first()
-    if user and bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
-        return {"message": "Login successful", "user_id": user.id}
-    raise HTTPException(status_code=401, detail="Invalid credentials")
-
-# POST request for user registration
+# Register a new user
 @app.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Check if user already exists
+    # Check if username or email already exists
     existing_user = db.query(models.User).filter(
         (models.User.email == user.email) | (models.User.username == user.username)
     ).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username or email already registered")
 
-    # Hash the password with bcrypt
+    # Hash the password
     hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    
-    # Create a new User instance
+    # Create a new user
     new_user = models.User(
         username=user.username,
         email=user.email,
@@ -97,8 +98,26 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
+# Login an existing user
+@app.post("/login")
+def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.username == request.username).first()
 
-# PUT request
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # Check password using bcrypt
+    if not bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # Success: return user ID (and optionally later a token)
+    return {
+        "message": "Login successful",
+        "user_id": user.id,
+        "username": user.username,
+    }
+
+# Update user info
 @app.put("/users/{user_id}", response_model=schemas.UserResponse)
 def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -106,13 +125,12 @@ def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = De
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Loop through fields and update only if provided
     update_fields = updated_data.dict(exclude_unset=True)
-    
+
     for key, value in update_fields.items():
         if key == "password" and value:
             hashed_pw = bcrypt.hashpw(value.encode('utf-8'), bcrypt.gensalt())
-            setattr(user, key, hashed_pw.decode('utf-8'))
+            setattr(user, "password_hash", hashed_pw.decode('utf-8'))
         else:
             setattr(user, key, value)
 
@@ -120,8 +138,7 @@ def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = De
     db.refresh(user)
     return user
 
-
-# DELETE request
+# Delete a user
 @app.delete("/users/{user_id}", status_code=204)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -131,40 +148,12 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 
     db.delete(user)
     db.commit()
-    return None  # 204 = No Content, so no response body
+    return None  # No content
 
-
-
-
+# ===== MAIN =====
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

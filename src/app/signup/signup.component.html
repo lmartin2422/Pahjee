@@ -48,7 +48,7 @@
       </div>
       
       <!-- Show error if passwords don't match -->
-      <div *ngIf="signupForm.errors?.passwordMismatch && signupForm.touched" class="error">
+      <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.touched" class="error">
         Passwords do not match.
       </div>
   

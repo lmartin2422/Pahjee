@@ -1,19 +1,27 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';  // ✅ Add this import
+
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],  // ✅ Add CommonModule here
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loginError: string | null = null;
 
-  constructor(private fb: FormBuilder, private router: Router, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private http: HttpClient
+  ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -21,17 +29,22 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    this.http.post('http://127.0.0.1:8000/login', this.loginForm.value).subscribe({
-      next: (res: any) => {
-        alert('Login successful!');
-        console.log(res);
-        localStorage.setItem('userId', res.user_id); // ✅ Store ID
-        this.router.navigate(['/my-profile']);        // ✅ Redirect
-      },
-      error: () => {
-        alert('Login failed');
-      }
-    });
+    if (this.loginForm.valid) {
+      this.http.post('http://127.0.0.1:8000/login', this.loginForm.value).subscribe({
+        next: (res: any) => {
+          alert('Login successful!');
+          console.log(res);
+          localStorage.setItem('userId', res.user_id);
+          this.router.navigate(['/my-profile']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.loginError = err.error?.detail || 'Login failed. Please try again.';
+        }
+      });
+    } else {
+      this.loginForm.markAllAsTouched();
+    }
   }
 
   goToSignup() {

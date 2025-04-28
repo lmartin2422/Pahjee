@@ -29,6 +29,11 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
+  loginUser(credentials: { username: string, password: string }) {
+    return this.http.post<any>(`${this.baseUrl}/login`, credentials);
+  }
+  
+  
   registerUser(user: User): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/register`, user);
   }
