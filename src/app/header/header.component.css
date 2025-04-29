@@ -1,26 +1,3 @@
-/* .header {
-    padding: 1rem 1rem;
-    text-align: center;
-
-}
-
-.title {
-    color: pink;
-    font-size: 24px;
-}
-
-.profile-link {
-    text-decoration: none;
-}
-
-.profile-icon {
-    font-size: 32px;
-    color: pink;
-}
-
- */
-
-
  .header {
     padding: 1rem 1rem;
     text-align: center;
@@ -46,3 +23,8 @@
     border: 2px solid pink;
     cursor: pointer;
 }
+
+
+.dropdown-toggle {
+    font-size: 1.5rem;
+  }

@@ -1,4 +1,4 @@
-<header class="header">
+<!-- <header class="header">
     <div class="text-center">
         <h1 class="display-4"><b>PAHJEE</b></h1>
     </div>
@@ -6,6 +6,30 @@
     <a class="profile-link" [routerLink]="'/myprofile'">
         <div class="profile-icon"></div>
     </a>
+</header> -->
 
 
-</header>
+<header class="header d-flex justify-content-between align-items-center px-3 py-2">
+    <!-- Left side: Hamburger Menu -->
+    <div class="dropdown">
+      <button class="btn btn-light dropdown-toggle" type="button" id="menuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        ☰
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="menuButton">
+        <li><a class="dropdown-item" routerLink="/myprofile">Update My Profile</a></li>
+        <li><a class="dropdown-item" routerLink="/preferences">Account Preferences</a></li>
+        <li><a class="dropdown-item" href="#" (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+  
+    <!-- Center: Title -->
+    <div class="text-center flex-grow-1">
+      <h1 class="display-6 m-0"><b>PAHJEE</b></h1>
+    </div>
+  
+    <!-- Right side: Profile icon -->
+    <a class="profile-link" routerLink="/myprofile">
+      <div class="profile-icon"></div>
+    </a>
+  </header>
+  
