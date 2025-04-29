@@ -2,23 +2,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SignupData, User } from '../models/user.model'; // Import it
 
-
-export interface User {
-  username: string;
-  email: string;
-  password: string;
-  firstname: string;
-  lastname: string;
-  profile_picture?: string;
-  location?: string;
-  bio?: string;
-  gender?: string;
-  birthdate?: string;
-  lookingfor?: string;
-  sexualorientation?: string;
-  professionindustry?: string;
-}
 
 
 @Injectable({
@@ -34,7 +19,7 @@ export class UserService {
   }
   
   
-  registerUser(user: User): Observable<User> {
+  registerUser(user: SignupData): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/register`, user);
   }
 

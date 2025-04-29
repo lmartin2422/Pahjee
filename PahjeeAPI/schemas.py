@@ -7,8 +7,9 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str  # Will be hashed before storing
-    firstname: str
-    lastname: str
+    
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
     profile_picture: Optional[str] = None
     location: Optional[str] = None
     bio: Optional[str] = None
@@ -22,8 +23,8 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
-    firstname: str
-    lastname: str
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
     profile_picture: Optional[str]
     location: Optional[str]
     bio: Optional[str]

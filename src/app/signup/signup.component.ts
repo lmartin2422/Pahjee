@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';  // Ensure ReactiveFormsModule is imported
-import { UserService } from '../../services/user.service';
+import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';  // Import CommonModule for standalone component support
 
@@ -14,6 +14,8 @@ import { CommonModule } from '@angular/common';  // Import CommonModule for stan
 })
 export class SignupComponent {
   signupForm: FormGroup;
+  showPassword: boolean = false;
+  showRetypePassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,15 +39,30 @@ export class SignupComponent {
     return password === confirm ? null : { passwordMismatch: true };
   }
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleRetypePasswordVisibility() {
+    this.showRetypePassword = !this.showRetypePassword;
+  }
+
   onSubmit() {
     if (this.signupForm.valid) {
-      this.userService.registerUser(this.signupForm.value).subscribe({
+      const signupData = {
+        username: this.signupForm.value.username,
+        email: this.signupForm.value.email,
+        password: this.signupForm.value.password
+      };
+  
+      this.userService.registerUser(signupData).subscribe({
         next: (res) => {
           alert('Registration successful!');
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          alert('Registration failed: ' + err.error.detail);
+          const errorMessage = err.error?.detail || 'An unknown error occurred.';
+          alert('Registration failed: ' + errorMessage);
         }
       });
     } else {

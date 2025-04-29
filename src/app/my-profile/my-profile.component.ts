@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service'; // Adjust the path as needed
+import { UserService } from '../services/user.service'; // Adjust the path as needed
 @Component({
   selector: 'app-my-profile',
   standalone: true,

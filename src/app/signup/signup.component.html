@@ -1,24 +1,3 @@
-<!-- <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-    <label>Username: <input formControlName="username"></label>
-    <label>Email: <input type="email" formControlName="email"></label>
-    <label>Password: <input type="password" formControlName="password"></label> -->
-  
-    <!-- Optional fields -->
-    <!-- <label>First Name: <input formControlName="firstname"></label>
-    <label>Last Name: <input formControlName="lastname"></label>
-    <label>Profile Picture URL: <input formControlName="profile_picture"></label>
-    <label>Location: <input formControlName="location"></label>
-    <label>Bio: <textarea formControlName="bio"></textarea></label>
-    <label>Gender: <input formControlName="gender"></label>
-    <label>Birthdate: <input type="date" formControlName="birthdate"></label>
-    <label>Looking For: <input formControlName="lookingfor"></label>
-    <label>Sexual Orientation: <input formControlName="sexualorientation"></label>
-    <label>Profession/Industry: <input formControlName="professionindustry"></label>
-  
-    <button type="submit">Sign Up</button>
-  </form> -->
-  
-
 
   <div class="signup-container">
     <h2>Create Your Account</h2>
@@ -36,12 +15,27 @@
   
       <label>
         Password  <span class="required">*</span>
-        <input formControlName="password" type="password" placeholder="Create a password" />
+        <input 
+        [type]="showPassword ? 'text' : 'password'" 
+        formControlName="password" 
+        placeholder="Create a password" 
+      />
+        <button type="button" class="toggle-link" (click)="togglePasswordVisibility()">
+          {{ showPassword ? 'Hide Password' : 'Show Password' }}
+        </button>      
+    
       </label>
 
       <label>
         Retype Password:  <span class="required">*</span>
-        <input type="password" formControlName="confirmPassword">
+        <input 
+        [type]="showRetypePassword ? 'text' : 'password'" 
+        formControlName="confirmPassword" 
+        placeholder="Retype your password"
+      />
+        <button type="button" class="toggle-link" (click)="toggleRetypePasswordVisibility()">
+          {{ showRetypePassword ? 'Hide Password' : 'Show Password' }}
+        </button>      
       </label>
       <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched" style="color: red;">
         Passwords do not match.
@@ -52,57 +46,7 @@
         Passwords do not match.
       </div>
   
-      <!-- Optional Fields -->
-      <label>
-        First Name
-        <input formControlName="firstname" type="text" />
-      </label>
-  
-      <label>
-        Last Name
-        <input formControlName="lastname" type="text" />
-      </label>
-  
-      <label>
-        Profile Picture URL
-        <input formControlName="profile_picture" type="url" />
-      </label>
-  
-      <label>
-        Location
-        <input formControlName="location" type="text" />
-      </label>
-  
-      <label>
-        Bio
-        <textarea formControlName="bio" placeholder="Tell us something about yourself..."></textarea>
-      </label>
-  
-      <label>
-        Gender
-        <input formControlName="gender" type="text" />
-      </label>
-  
-      <label>
-        Birthdate
-        <input formControlName="birthdate" type="date" />
-      </label>
-  
-      <label>
-        Looking For
-        <input formControlName="lookingfor" type="text" />
-      </label>
-  
-      <label>
-        Sexual Orientation
-        <input formControlName="sexualorientation" type="text" />
-      </label>
-  
-      <label>
-        Profession/Industry
-        <input formControlName="professionindustry" type="text" />
-      </label>
-  
+
       <button type="submit" [disabled]="signupForm.invalid || signupForm.errors?.['passwordMismatch']">Sign Up</button>
     </form>
   </div>
