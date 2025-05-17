@@ -65,4 +65,58 @@ export class UpdateProfileComponent implements OnInit {
       });
     }
   }
+
+  showUploadModal = false;
+uploadedImages: { file: File, url: string }[] = [];
+selectedProfilePic: string = '';
+
+openUploadModal() {
+  this.showUploadModal = true;
+}
+
+closeUploadModal() {
+  this.showUploadModal = false;
+}
+
+onFileSelected(event: any) {
+  const files: FileList = event.target.files;
+  if (files && files.length + this.uploadedImages.length <= 6) {
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.uploadedImages.push({ file, url: e.target.result });
+      };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    alert('Maximum 6 images allowed.');
+  }
+}
+
+removeImage(index: number) {
+  this.uploadedImages.splice(index, 1);
+}
+
+selectProfilePicture(url: string) {
+  this.selectedProfilePic = url;
+}
+
+savePictures() {
+  const userId = localStorage.getItem('userId');
+
+  if (!userId || this.uploadedImages.length === 0) return;
+
+  const formData = new FormData();
+  this.uploadedImages.forEach(image => formData.append('pictures', image.file));
+  formData.append('profile_picture', this.selectedProfilePic);
+
+  this.http.post(`http://127.0.0.1:8000/users/${userId}/upload-pictures`, formData).subscribe({
+    next: () => {
+      alert('Pictures uploaded!');
+      this.closeUploadModal();
+    },
+    error: (err) => alert('Upload failed: ' + err.message)
+  });
+}
+
 }

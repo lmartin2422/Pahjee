@@ -2,24 +2,6 @@
   <h2>Update Your Profile</h2>
 
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <!-- Username -->
-    <div class="form-group">
-      <label>Username</label>
-      <input class="form-control" formControlName="username">
-    </div>
-
-    <!-- Email -->
-    <div class="form-group">
-      <label>Email</label>
-      <input class="form-control" type="email" formControlName="email">
-    </div>
-
-    <!-- Password -->
-    <div class="form-group">
-      <label>New Password</label>
-      <input class="form-control" type="password" formControlName="password">
-    </div>
-
     <!-- First Name -->
     <div class="form-group">
       <label>First Name</label>
@@ -32,11 +14,34 @@
       <input class="form-control" formControlName="lastname">
     </div>
 
-    <!-- Profile Picture URL -->
-    <div class="form-group">
-      <label>Profile Picture URL</label>
-      <input class="form-control" formControlName="profile_picture">
+<!-- Upload Pics Link -->
+<a href="#" (click)="openUploadModal()">Upload Pics</a>
+
+<!-- Modal -->
+<div *ngIf="showUploadModal" class="modal-backdrop">
+  <div class="modal">
+    <h3>Upload Pictures (Max 6)</h3>
+    
+    <!-- Image Previews -->
+    <div class="preview-container">
+      <div *ngFor="let img of uploadedImages; let i = index" class="image-slot">
+        <img [src]="img.url" alt="Uploaded Image" class="preview-img">
+        <input type="radio" name="profilePic" [value]="img.url" (change)="selectProfilePicture(img.url)" [checked]="img.url === selectedProfilePic">
+        <label>Set as profile pic</label>
+        <button type="button" (click)="removeImage(i)">Remove</button>
+      </div>
     </div>
+
+    <!-- Upload Input -->
+    <input type="file" (change)="onFileSelected($event)" [disabled]="uploadedImages.length >= 6" multiple accept="image/*">
+
+    <!-- Save / Cancel Buttons -->
+    <div class="modal-actions">
+      <button (click)="savePictures()">Save</button>
+      <button (click)="closeUploadModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
     <!-- Location -->
     <div class="form-group">
