@@ -6,6 +6,7 @@ import { ExploreComponent } from './explore/explore.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { HeaderComponent } from './header/header.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
+import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { NgModule } from '@angular/core';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
@@ -19,7 +20,8 @@ export const routes: Routes = [
     { path: 'messages', component: DirectMessagesComponent},
     { path: 'explore', component: ExploreComponent},
     { path: 'favorites', component: FavoritesComponent},
-    { path: 'myprofile', component: MyProfileComponent},
+     { path: 'update-profile', component: UpdateProfileComponent},
+    { path: 'my-profile', component: MyProfileComponent},
     { path: '', component: LoginComponent },
     { path: '**', redirectTo: '/home', pathMatch: 'full' } // invalid
 ];

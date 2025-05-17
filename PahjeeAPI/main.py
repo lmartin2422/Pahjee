@@ -1,34 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi import APIRouter, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from passlib.context import CryptContext
-
-from pydantic import BaseModel, EmailStr
+from fastapi import FastAPI, Depends, HTTPException  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from sqlalchemy.orm import Session
-import psycopg2
+from pydantic import BaseModel, EmailStr  # type: ignore
 
-import hashlib
 import models
 import schemas
 import database
-
-import bcrypt
-
-
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from passlib.context import CryptContext
-from pydantic import BaseModel, EmailStr
-from sqlalchemy.orm import Session
-import models
-import schemas
-import database
-import bcrypt
+import bcrypt  # type: ignore
 
 app = FastAPI()
-
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -61,6 +41,15 @@ def read_root():
 def get_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
+
+
+@app.get("/users/{user_id}", response_model=schemas.UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 # Register a new user
 @app.post("/register", response_model=schemas.UserResponse)
@@ -110,7 +99,7 @@ def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     if not bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    # Success: return user ID (and optionally later a token)
+    # Success: return user ID and username only
     return {
         "message": "Login successful",
         "user_id": user.id,
@@ -154,7 +143,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
-
 
 
 """

@@ -1,15 +1,23 @@
-<div class="profile-container">
-    <h2 class="profile-name">Sample Name</h2>
-    <div class="profile-picture"></div>
+<div class="profile-container" *ngIf="user">
+  <h2>{{ user.firstname }} {{ user.lastname }}'s Profile</h2>
 
+  <div class="profile-picture">
+    <img [src]="user.profile_picture || 'https://via.placeholder.com/150'" alt="Profile Picture" />
+  </div>
 
-    <div class="profile-details">
-        <p><strong>Age:</strong> <span class="profile-age"> 35</span></p>
-        <p><strong>Location:</strong> <span class="profile-location"> San Francisco, CA</span></p>
-        <p><strong>Profession:</strong> <span class="profile-profession"> Software Engineer</span></p>
-        <p><strong>About Me:</strong> <span class="profile-profession"> I enjoy long walks on the beach</span></p>
-        <p><strong>Looking For:</strong> <span class="profile-profession"> Relationship, Dates, Hook Up</span></p>
-        <p><strong>Sign:</strong> <span class="profile-profession"> Aquarius</span></p>
-    </div>
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Location:</strong> {{ user.location || 'Not specified' }}</p>
+  <p><strong>Bio:</strong> {{ user.bio || 'Not provided' }}</p>
+  <p><strong>Gender:</strong> {{ user.gender || 'Not specified' }}</p>
+  <p><strong>Birthdate:</strong> {{ user.birthdate | date }}</p>
+  <p><strong>Looking For:</strong> {{ user.lookingfor || 'Not specified' }}</p>
+  <p><strong>Sexual Orientation:</strong> {{ user.sexualorientation || 'Not specified' }}</p>
+  <p><strong>Profession/Industry:</strong> {{ user.professionindustry || 'Not specified' }}</p>
 
+  <button class="btn btn-secondary mt-3" routerLink="/update-profile">Edit Profile</button>
+</div>
+
+<div *ngIf="!user">
+  <p>Loading profile...</p>
 </div>

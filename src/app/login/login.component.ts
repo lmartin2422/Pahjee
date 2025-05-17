@@ -34,7 +34,7 @@ export class LoginComponent {
         next: (res: any) => {
           alert('Login successful!');
           console.log(res);
-          localStorage.setItem('userId', res.user_id);
+          localStorage.setItem('user_id', res.user_id);
           this.router.navigate(['/my-profile']);
         },
         error: (err) => {

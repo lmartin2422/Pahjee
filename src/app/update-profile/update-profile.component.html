@@ -1,0 +1,98 @@
+<div class="update-profile-container">
+  <h2>Update Your Profile</h2>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <!-- Username -->
+    <div class="form-group">
+      <label>Username</label>
+      <input class="form-control" formControlName="username">
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label>Email</label>
+      <input class="form-control" type="email" formControlName="email">
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label>New Password</label>
+      <input class="form-control" type="password" formControlName="password">
+    </div>
+
+    <!-- First Name -->
+    <div class="form-group">
+      <label>First Name</label>
+      <input class="form-control" formControlName="firstname">
+    </div>
+
+    <!-- Last Name -->
+    <div class="form-group">
+      <label>Last Name</label>
+      <input class="form-control" formControlName="lastname">
+    </div>
+
+    <!-- Profile Picture URL -->
+    <div class="form-group">
+      <label>Profile Picture URL</label>
+      <input class="form-control" formControlName="profile_picture">
+    </div>
+
+    <!-- Location -->
+    <div class="form-group">
+      <label>Location</label>
+      <input class="form-control" formControlName="location">
+    </div>
+
+    <!-- Bio -->
+    <div class="form-group">
+      <label>Bio</label>
+      <textarea class="form-control" formControlName="bio"></textarea>
+    </div>
+
+    <!-- Gender Dropdown -->
+    <div class="form-group">
+      <label>Gender</label>
+      <select class="form-control" formControlName="gender">
+        <option value="">Select</option>
+        <option *ngFor="let option of genderOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <!-- Birthdate -->
+    <div class="form-group">
+      <label>Birthdate</label>
+      <input class="form-control" type="date" formControlName="birthdate">
+    </div>
+
+    <!-- Looking For Dropdown -->
+    <div class="form-group">
+      <label>Looking For</label>
+      <select class="form-control" formControlName="lookingfor">
+        <option value="">Select</option>
+        <option *ngFor="let option of lookingForOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <!-- Sexual Orientation Dropdown -->
+    <div class="form-group">
+      <label>Sexual Orientation</label>
+      <select class="form-control" formControlName="sexualorientation">
+        <option value="">Select</option>
+        <option *ngFor="let option of orientationOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <!-- Profession/Industry Dropdown -->
+    <div class="form-group">
+      <label>Profession/Industry</label>
+      <select class="form-control" formControlName="professionindustry">
+        <option value="">Select</option>
+        <option *ngFor="let option of professionOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <!-- Save Button -->
+    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+  </form>
+</div>

@@ -1,29 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service'; // Adjust the path as needed
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // ✅ Add this
+
+
 @Component({
   selector: 'app-my-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './my-profile.component.html',
   styleUrl: './my-profile.component.css'
 })
 
+
 export class MyProfileComponent implements OnInit {
-  userData: any;
+  user: any = null;
 
-  constructor(private userService: UserService) {}
+  constructor(private http: HttpClient) {}
 
-  // Example to get all ofthe users from the frontend
   ngOnInit(): void {
-    this.userService.getAllUsers().subscribe({
-      next: (data) => {
-        this.userData = data;
-        console.log('User data loaded:', this.userData);
-      },
-      error: (err) => {
-        console.error('Failed to load user data:', err);
-      }
-    });
+    const userId = localStorage.getItem('user_id');
+    if (userId) {
+      this.http.get(`http://127.0.0.1:8000/users/${userId}`).subscribe((data: any) => {
+        this.user = data;
+      });
+    }
+  }
+
+  onSubmit(): void {
+    const userId = localStorage.getItem('user_id');
+    if (userId) {
+      this.http.put(`http://127.0.0.1:8000/users/${userId}`, this.user).subscribe({
+        next: () => alert('Profile updated successfully!'),
+        error: (err: any) => alert('Failed to update profile: ' + err.message),
+      });
+    }
   }
 }
