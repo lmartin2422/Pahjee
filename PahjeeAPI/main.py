@@ -8,7 +8,17 @@ import schemas
 import database
 import bcrypt  # type: ignore
 
+from routers import pictures
+
 app = FastAPI()
+
+# Mount static file uploads (optional but recommended for development)
+from fastapi.staticfiles import StaticFiles
+app.mount("/static", StaticFiles(directory="uploads"), name="static")
+
+# Include the router
+app.include_router(pictures.router)
+
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)

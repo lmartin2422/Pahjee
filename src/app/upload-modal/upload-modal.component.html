@@ -1,0 +1,15 @@
+<div class="upload-modal">
+  <h3>Upload Pictures</h3>
+
+  <input type="file" (change)="onFileChange($event)" multiple accept="image/*" />
+  
+  <div class="image-preview" *ngFor="let file of selectedFiles; let i = index">
+    <img [src]="getImagePreview(file)" width="100" height="100">
+    <button (click)="removeFile(i)">Remove</button>
+    <button (click)="setProfilePicture(i)">
+      {{ profilePicIndex === i ? 'Profile Picture ✔' : 'Set as Profile Picture' }}
+    </button>
+  </div>
+
+  <button (click)="uploadImages()" [disabled]="!selectedFiles.length">Upload</button>
+</div>

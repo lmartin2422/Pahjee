@@ -16,6 +16,9 @@
 
 <!-- Upload Pics Link -->
 <a href="#" (click)="openUploadModal()">Upload Pics</a>
+<a href="#" (click)="showUploadModal = true">Upload Pics</a>
+<app-upload-modal *ngIf="showUploadModal"></app-upload-modal>
+
 
 <!-- Modal -->
 <div *ngIf="showUploadModal" class="modal-backdrop">

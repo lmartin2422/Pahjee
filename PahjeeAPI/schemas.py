@@ -25,7 +25,6 @@ class UserResponse(BaseModel):
     email: EmailStr
     firstname: Optional[str] = None
     lastname: Optional[str] = None
-    profile_picture: Optional[str]
     location: Optional[str]
     bio: Optional[str]
     gender: Optional[str]
@@ -42,7 +41,6 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None  # You might want to hash this again if it's changed
     firstname: Optional[str] = None
     lastname: Optional[str] = None
-    profile_picture: Optional[str] = None
     location: Optional[str] = None
     bio: Optional[str] = None
     gender: Optional[str] = None
@@ -56,8 +54,22 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+
+class PictureBase(BaseModel):
+    image_url: str
+    is_profile_picture: bool = False
+
+class PictureCreate(PictureBase):
+    pass
+
+class Picture(PictureBase):
+    id: int
+    user_id: int
+
     class Config:
         orm_mode = True
+
+
 
 
 

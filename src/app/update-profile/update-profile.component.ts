@@ -3,12 +3,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { UploadModalComponent } from '../upload-modal/upload-modal.component';
+
 
 
 @Component({
   selector: 'app-update-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, UploadModalComponent],
   templateUrl: './update-profile.component.html',
   styleUrl: './update-profile.component.css'
 })
@@ -66,7 +68,7 @@ export class UpdateProfileComponent implements OnInit {
     }
   }
 
-  showUploadModal = false;
+showUploadModal = false;
 uploadedImages: { file: File, url: string }[] = [];
 selectedProfilePic: string = '';
 
@@ -118,5 +120,6 @@ savePictures() {
     error: (err) => alert('Upload failed: ' + err.message)
   });
 }
+
 
 }
