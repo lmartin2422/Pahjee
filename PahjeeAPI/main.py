@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException  # type: ignore
-from fastapi.middleware.cors import CORSMiddleware  # type: ignore
+from fastapi import FastAPI, Depends, HTTPException  
+from fastapi.middleware.cors import CORSMiddleware  
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr  # type: ignore
-
+from pydantic import BaseModel, EmailStr  
 import models
 import schemas
 import database

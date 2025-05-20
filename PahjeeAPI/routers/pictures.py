@@ -4,8 +4,12 @@ import shutil
 import uuid
 import os
 
-from .. import models, schemas, database
-from ..dependencies import get_current_user  # adjust based on your setup
+from models import models
+import schemas
+import database
+from models import Picture, User
+
+from dependencies import get_current_user  # adjust based on your setup
 
 router = APIRouter()
 

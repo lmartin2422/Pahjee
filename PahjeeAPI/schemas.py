@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr # type: ignore 
 from typing import Optional
 from datetime import date
 from datetime import datetime
@@ -67,8 +67,7 @@ class Picture(PictureBase):
     user_id: int
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True  # instead of orm_mode = True
 
 
 
