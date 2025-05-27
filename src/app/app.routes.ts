@@ -1,6 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { BrowseFiltersComponent } from './browse-filters/browse-filters.component';
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
 import { ExploreComponent } from './explore/explore.component';
 import { FavoritesComponent } from './favorites/favorites.component';
@@ -10,7 +9,7 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
 import { NgModule } from '@angular/core';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-
+import { ViewProfileComponent } from './view-profile/view-profile.component';
 
 
 export const routes: Routes = [
@@ -18,10 +17,12 @@ export const routes: Routes = [
     { path: 'signup', component: SignupComponent },
     { path: 'home', component: HomeComponent} ,
     { path: 'messages', component: DirectMessagesComponent},
+    { path: 'messages/:id', component: DirectMessagesComponent },
     { path: 'explore', component: ExploreComponent},
     { path: 'favorites', component: FavoritesComponent},
-     { path: 'update-profile', component: UpdateProfileComponent},
+    { path: 'update-profile', component: UpdateProfileComponent},
     { path: 'my-profile', component: MyProfileComponent},
+    { path: 'profile/:id', component: ViewProfileComponent},
     { path: '', component: LoginComponent },
     { path: '**', redirectTo: '/home', pathMatch: 'full' } // invalid
 ];

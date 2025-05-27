@@ -2,14 +2,22 @@
   <h3>Upload Pictures</h3>
 
   <input type="file" (change)="onFileChange($event)" multiple accept="image/*" />
-  
-  <div class="image-preview" *ngFor="let file of selectedFiles; let i = index">
-    <img [src]="getImagePreview(file)" width="100" height="100">
-    <button (click)="removeFile(i)">Remove</button>
-    <button (click)="setProfilePicture(i)">
-      {{ profilePicIndex === i ? 'Profile Picture ✔' : 'Set as Profile Picture' }}
-    </button>
+
+  <div class="image-grid">
+    <div class="image-preview" *ngFor="let file of selectedFiles; let i = index">
+      <img [src]="getImagePreview(file)" width="100" height="100">
+      <div class="actions">
+        <button (click)="removeFile(i)">🗑 Remove</button>
+        <button (click)="setProfilePicture(i)">
+          {{ profilePicIndex === i ? '✔ Profile Pic' : 'Set as Profile Pic' }}
+        </button>
+      </div>
+    </div>
   </div>
 
-  <button (click)="uploadImages()" [disabled]="!selectedFiles.length">Upload</button>
+  <button (click)="uploadImages()" [disabled]="uploading || !selectedFiles.length">
+    {{ uploading ? 'Uploading...' : 'Upload' }}
+  </button>
+
+  <p *ngIf="error" class="error">{{ error }}</p>
 </div>

@@ -1,52 +1,14 @@
 <div class="message-container">
-    
-    <!-- <div *ngFor="let message of messages" class="message" (click)="toggleThread(message)">
-        <div class="message-header">
-            <span class="sender-name">{{ message.sender }}</span>
-            <span class="timestamp">{{ message.timestamp }}</span>
-        </div>
-        <p class="message-text">{{ message.preview }}</p>
-
-         Thread (Shown when a message is clicked) -->
-        <!-- <div *ngIf="message.isOpen" class="thread">
-            <div *ngFor="let reply of message.replies" class="reply">
-                <span class="reply-sender">{{ reply.sender }}:</span>
-                <p class="reply-text">{{ reply.text }}</p>
-            </div>
-            <input type="text" placeholder="Type a reply..." [(ngModel)]="replyText" class="reply-input">
-            <button (click)="sendReply(message)" class="reply-button">Send</button>
-        </div> --> 
-    
-    
-    <div class="message">
-        <div class="message-header">
-            <span class="sender-name">Alice</span>
-            <span class="message-time">10:30 AM</span>
-        </div>
-        <p class="message-text">Hey! How are you?</p>
+  <div *ngFor="let message of messages" class="message">
+    <div class="message-header">
+      <span class="sender-name">{{ message.sender_id === recipientId ? 'You' : 'Them' }}</span>
+      <span class="message-time">{{ message.timestamp | date:'short' }}</span>
     </div>
+    <p class="message-text">{{ message.content }}</p>
+  </div>
 
-    <div class="message">
-        <div class="message-header">
-            <span class="sender-name">Bob</span>
-            <span class="message-time">9:15 AM</span>
-        </div>
-        <p class="message-text">Don't forget our meeting at 3 PM.</p>
-    </div>
-
-    <div class="message">
-        <div class="message-header">
-            <span class="sender-name">Charlie</span>
-            <span class="message-time">Yesterday</span>
-        </div>
-        <p class="message-text">Check out this cool article I found!</p>
-    </div>
-
-    <div class="message">
-        <div class="message-header">
-            <span class="sender-name">You</span>
-            <span class="message-time">Just now</span>
-        </div>
-        <p class="message-text">Sure, I'll check it out. Thanks!</p>
-    </div>
+  <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="send-message">
+    <input formControlName="message" placeholder="Type a message" />
+    <button type="submit">Send</button>
+  </form>
 </div>

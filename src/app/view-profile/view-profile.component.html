@@ -1,0 +1,15 @@
+<div *ngIf="userData">
+  <h2>{{ userData.username }}'s Profile</h2>
+  <p>{{ userData.bio }}</p>
+  <p>Gender: {{ userData.gender }}</p>
+  <p>Location: {{ userData.location }}</p>
+
+  <!-- Message Form -->
+  <div>
+    <h3>Send Message</h3>
+    <form (ngSubmit)="sendMessage()">
+      <textarea [(ngModel)]="messageContent" name="messageContent" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>

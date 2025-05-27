@@ -27,11 +27,28 @@ export class UserService {
     return this.http.get<User[]>(`${this.baseUrl}/users/`);
   }
 
-  updateUser(userId: number, user: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/users/${userId}`, user);
+   updateProfile(userId: number, data: any) {
+    return this.http.put(`${this.baseUrl}/users/${userId}`, data);
   }
 
   deleteUser(userId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/users/${userId}`);
   }
+
+   searchUsers(filters: any) {
+    return this.http.post(`${this.baseUrl}/search`, filters);
+  }
+
+  favoriteUser(userId: number, favoriteUserId: number) {
+    return this.http.post(`${this.baseUrl}/favorite`, { user_id: userId, favorite_user_id: favoriteUserId });
+  }
+
+  getFavorites(userId: number) {
+    return this.http.get(`${this.baseUrl}/favorites/${userId}`);
+  }
+
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/${id}`);
+  }
+
 }

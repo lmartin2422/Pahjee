@@ -1,11 +1,9 @@
 <div class="favorites-container">
-    <div class="row">
-        <div class="box"></div>
-        <div class="box"></div>
-    </div>
-    <div class="row">
-        <div class="box"></div>
-        <div class="box"></div>
-    </div>
-
+  <h3>Your Favorite Users</h3>
+  <ul>
+    <li *ngFor="let user of favorites">
+      {{ user.username }}
+      <button (click)="removeFavorite(user.id)">Remove</button>
+    </li>
+  </ul>
 </div>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BrowseFiltersComponent } from './browse-filters.component';
+import { ViewProfileComponent } from './view-profile.component';
 
-describe('BrowseFiltersComponent', () => {
-  let component: BrowseFiltersComponent;
-  let fixture: ComponentFixture<BrowseFiltersComponent>;
+describe('ViewProfileComponent', () => {
+  let component: ViewProfileComponent;
+  let fixture: ComponentFixture<ViewProfileComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrowseFiltersComponent]
+      imports: [ViewProfileComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BrowseFiltersComponent);
+    fixture = TestBed.createComponent(ViewProfileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

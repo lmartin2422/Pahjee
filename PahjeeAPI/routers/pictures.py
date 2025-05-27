@@ -4,7 +4,7 @@ import shutil
 import uuid
 import os
 
-from models import models
+import models
 import schemas
 import database
 from models import Picture, User

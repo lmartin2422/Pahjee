@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { PictureService } from '../services/picture.service';
+
+
 
 @Component({
   selector: 'app-upload-modal',
@@ -13,13 +16,11 @@ import { HttpClient } from '@angular/common/http';
 export class UploadModalComponent {
   selectedFiles: File[] = [];
   profilePicIndex: number | null = null;
+  uploading: boolean = false;
+  error: string | null = null;
 
-  getImagePreview(file: File): string {
-  return URL.createObjectURL(file);
-}
+  constructor(private pictureService: PictureService) {}
 
-
-  constructor(private http: HttpClient) {}
 
   onFileChange(event: any): void {
     const files = Array.from(event.target.files) as File[];
@@ -36,28 +37,41 @@ export class UploadModalComponent {
     this.profilePicIndex = index;
   }
 
+  getImagePreview(file: File): string {
+  return URL.createObjectURL(file);
+  }
+
   removeFile(index: number): void {
     this.selectedFiles.splice(index, 1);
     if (this.profilePicIndex === index) {
       this.profilePicIndex = null;
+    } else if (this.profilePicIndex && this.profilePicIndex > index) {
+      this.profilePicIndex--; // adjust index if needed
     }
   }
 
   uploadImages(): void {
-    const userId = localStorage.getItem('userId');
-    if (!userId) return;
+    const userId = Number(localStorage.getItem('userId'));
+    if (!userId || this.selectedFiles.length === 0) return;
 
-    const formData = new FormData();
-    this.selectedFiles.forEach((file, index) => {
-      formData.append('files', file);
-      if (index === this.profilePicIndex) {
-        formData.append('profile_picture', file.name);
-      }
-    });
+    this.uploading = true;
+    this.error = null;
 
-    this.http.post(`http://127.0.0.1:8000/users/${userId}/upload_pictures`, formData).subscribe({
-      next: () => alert('Upload successful!'),
-      error: (err) => alert('Upload failed: ' + err.message)
-    });
+    const uploads = this.selectedFiles.map((file, index) =>
+      this.pictureService.uploadPicture(userId, file, index === this.profilePicIndex)
+    );
+
+    Promise.all(uploads.map(u => u.toPromise()))
+      .then(() => {
+        this.uploading = false;
+        alert('Pictures uploaded successfully.');
+        this.selectedFiles = [];
+        this.profilePicIndex = null;
+      })
+      .catch(err => {
+        this.uploading = false;
+        this.error = 'Upload failed. Please try again.';
+        console.error(err);
+      });
   }
 }

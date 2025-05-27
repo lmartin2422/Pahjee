@@ -1,79 +1,50 @@
-from fastapi import FastAPI, Depends, HTTPException  
-from fastapi.middleware.cors import CORSMiddleware  
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr  
-import models
-import schemas
-import database
-import bcrypt  # type: ignore
+from database import SessionLocal, engine
+import models, schemas
+import bcrypt
+import shutil
+import os
+from typing import List
 
-from routers import pictures
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Mount static file uploads (optional but recommended for development)
-from fastapi.staticfiles import StaticFiles
-app.mount("/static", StaticFiles(directory="uploads"), name="static")
-
-# Include the router
-app.include_router(pictures.router)
-
-
-# Create database tables
-models.Base.metadata.create_all(bind=database.engine)
-
-# CORS: Allow Angular frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Angular default port
+    allow_origins=["http://localhost:4200"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Dependency to get database session
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-# ===== ROUTES =====
+# -------------------- AUTH --------------------
+
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Pahjee API"}
 
-# Get all users (optional)
-@app.get("/users", response_model=list[schemas.UserResponse])
-def get_users(db: Session = Depends(get_db)):
-    users = db.query(models.User).all()
-    return users
 
-
-@app.get("/users/{user_id}", response_model=schemas.UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-# Register a new user
 @app.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # Check if username or email already exists
     existing_user = db.query(models.User).filter(
         (models.User.email == user.email) | (models.User.username == user.username)
     ).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username or email already registered")
 
-    # Hash the password
     hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    # Create a new user
     new_user = models.User(
         username=user.username,
         email=user.email,
@@ -96,57 +67,105 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
-# Login an existing user
 @app.post("/login")
 def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == request.username).first()
-
-    if not user:
+    if not user or not bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    # Check password using bcrypt
-    if not bcrypt.checkpw(request.password.encode('utf-8'), user.password_hash.encode('utf-8')):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+    return {"message": "Login successful", "user_id": user.id, "username": user.username}
 
-    # Success: return user ID and username only
-    return {
-        "message": "Login successful",
-        "user_id": user.id,
-        "username": user.username,
-    }
+# -------------------- PICTURES --------------------
 
-# Update user info
-@app.put("/users/{user_id}", response_model=schemas.UserResponse)
-def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = Depends(get_db)):
+@app.post("/upload-picture/{user_id}")
+def upload_picture(user_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    upload_dir = "uploaded_pictures"
+    os.makedirs(upload_dir, exist_ok=True)
+
+    file_path = os.path.join(upload_dir, file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    picture = models.Picture(user_id=user_id, image_url=file_path)
+    db.add(picture)
+    db.commit()
+    db.refresh(picture)
+
+    return {"message": "Picture uploaded successfully", "image_url": picture.image_url}
+
+@app.put("/pictures/{picture_id}/set-profile")
+def set_profile_picture(picture_id: int, db: Session = Depends(get_db)):
+    picture = db.query(models.Picture).filter(models.Picture.id == picture_id).first()
+    if not picture:
+        raise HTTPException(status_code=404, detail="Picture not found")
+
+    db.query(models.Picture).filter(models.Picture.user_id == picture.user_id).update({"is_profile_picture": False})
+    picture.is_profile_picture = True
+    db.commit()
+    return {"message": "Profile picture set successfully"}
+
+# -------------------- MESSAGES --------------------
+
+@app.post("/messages/send")
+def send_message(message: schemas.MessageCreate, db: Session = Depends(get_db)):
+    new_message = models.Message(**message.dict())
+    db.add(new_message)
+    db.commit()
+    db.refresh(new_message)
+    return new_message
+
+@app.get("/messages/{user_id}", response_model=List[schemas.MessageResponse])
+def get_messages(user_id: int, db: Session = Depends(get_db)):
+    messages = db.query(models.Message).filter(models.Message.receiver_id == user_id).all()
+    return messages
+
+# -------------------- FAVORITES --------------------
+
+@app.post("/favorites")
+def favorite_user(fav: schemas.FavoriteCreate, db: Session = Depends(get_db)):
+    existing = db.query(models.Favorite).filter_by(user_id=fav.user_id, favorite_user_id=fav.favorite_user_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="User already favorited")
+    new_fav = models.Favorite(**fav.dict())
+    db.add(new_fav)
+    db.commit()
+    db.refresh(new_fav)
+    return new_fav
+
+@app.get("/favorites/{user_id}", response_model=List[schemas.FavoriteResponse])
+def get_favorites(user_id: int, db: Session = Depends(get_db)):
+    return db.query(models.Favorite).filter(models.Favorite.user_id == user_id).all()
+
+# -------------------- UPDATE PROFILE --------------------
+
+@app.put("/users/{user_id}")
+def update_profile(user_id: int, user_data: schemas.UserUpdate, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
-
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    update_fields = updated_data.dict(exclude_unset=True)
-
-    for key, value in update_fields.items():
-        if key == "password" and value:
-            hashed_pw = bcrypt.hashpw(value.encode('utf-8'), bcrypt.gensalt())
-            setattr(user, "password_hash", hashed_pw.decode('utf-8'))
-        else:
-            setattr(user, key, value)
+    for key, value in user_data.dict(exclude_unset=True).items():
+        setattr(user, key, value)
 
     db.commit()
     db.refresh(user)
     return user
 
-# Delete a user
-@app.delete("/users/{user_id}", status_code=204)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+# -------------------- SEARCH FILTER --------------------
 
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+@app.get("/search", response_model=List[schemas.UserResponse])
+def search_users(location: str = None, gender: str = None, lookingfor: str = None, db: Session = Depends(get_db)):
+    query = db.query(models.User)
 
-    db.delete(user)
-    db.commit()
-    return None  # No content
+    if location:
+        query = query.filter(models.User.location.ilike(f"%{location}%"))
+    if gender:
+        query = query.filter(models.User.gender == gender)
+    if lookingfor:
+        query = query.filter(models.User.lookingfor == lookingfor)
+
+    return query.all()
+
 
 # ===== MAIN =====
 if __name__ == "__main__":
