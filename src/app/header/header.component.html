@@ -17,9 +17,12 @@
       <h1 class="display-6 m-0"><b>PAHJEE</b></h1>
     </div>
   
-    <!-- Right side: Profile icon -->
-    <a class="profile-link" routerLink="/myprofile">
-      <div class="profile-icon"></div>
-    </a>
+     <!-- Right side: Profile icon and greeting -->
+    <div class="d-flex align-items-center">
+      <span *ngIf="username" class="me-2">Hi, {{ username }}</span>
+      <a class="profile-link" routerLink="/my-profile">
+        <div class="profile-icon"></div>
+      </a>
+    </div>
   </header>
   
