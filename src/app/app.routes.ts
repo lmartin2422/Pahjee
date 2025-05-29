@@ -12,6 +12,7 @@ import { SignupComponent } from './signup/signup.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 
 
+
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },

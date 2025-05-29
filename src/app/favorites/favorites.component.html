@@ -3,6 +3,7 @@
   <ul>
     <li *ngFor="let user of favorites">
       {{ user.username }}
+      <!-- <button [routerLink]="['/view-profile', user.id]">View Profile</button> -->
       <button (click)="removeFavorite(user.id)">Remove</button>
     </li>
   </ul>

@@ -51,7 +51,6 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         password_hash=hashed_password,
         firstname=user.firstname,
         lastname=user.lastname,
-        profile_picture=user.profile_picture,
         location=user.location,
         bio=user.bio,
         gender=user.gender,

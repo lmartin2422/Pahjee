@@ -1,10 +1,11 @@
-from sqlalchemy import Column, Integer, Text, String, Date, TIMESTAMP, Boolean, ForeignKey, func
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from database import Base
-from datetime import datetime
+from sqlalchemy import (
+    Column, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey
+)
+from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.sql import func
 
 Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "users"
@@ -16,7 +17,6 @@ class User(Base):
 
     firstname = Column(String, nullable=True)
     lastname = Column(String, nullable=True)
-    profile_picture = Column(String, nullable=True)
     location = Column(String, nullable=True)
     bio = Column(String, nullable=True)
     gender = Column(String, nullable=True)
@@ -28,10 +28,35 @@ class User(Base):
 
     # Relationships
     pictures = relationship("Picture", back_populates="user", cascade="all, delete")
-    sent_messages = relationship("Message", back_populates="sender", foreign_keys='Message.sender_id', cascade="all, delete")
-    received_messages = relationship("Message", back_populates="recipient", foreign_keys='Message.recipient_id', cascade="all, delete")
-    favorites = relationship("Favorite", back_populates="user", cascade="all, delete")
-    favorited_by = relationship("Favorite", back_populates="favorite_user", foreign_keys='Favorite.favorite_user_id')
+    sent_messages = relationship("Message", back_populates="sender", foreign_keys="Message.sender_id", cascade="all, delete")
+    received_messages = relationship("Message", back_populates="recipient", foreign_keys="Message.recipient_id", cascade="all, delete")
+    search_preferences = relationship("SearchPreference", back_populates="user", cascade="all, delete")
+
+    favorites_sent = relationship("Favorite", foreign_keys="[Favorite.user_id]", back_populates="user")
+    favorites_received = relationship("Favorite", foreign_keys="[Favorite.favorited_user_id]", back_populates="favorited_user")
+
+    def __repr__(self):
+        return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
+
+
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    favorited_user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(TIMESTAMP, server_default=func.now())
+
+
+    # RELATIONSHIPS
+    user = relationship("User", foreign_keys=[user_id], back_populates="favorites_sent")
+    favorited_user = relationship("User", foreign_keys=[favorited_user_id], back_populates="favorites_received")
+
+
+    def __repr__(self):
+        return f"<Favorite(id={self.id}, user_id={self.user_id}, favorite_user_id={self.favorite_user_id})>"
+
 
 
 
@@ -45,8 +70,9 @@ class Picture(Base):
 
     user = relationship("User", back_populates="pictures")
 
-# In your existing User model:
-# 
+    def __repr__(self):
+        return f"<Picture(id={self.id}, user_id={self.user_id}, image_url='{self.image_url}', is_profile_picture={self.is_profile_picture})>"
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -60,17 +86,9 @@ class Message(Base):
     sender = relationship("User", back_populates="sent_messages", foreign_keys=[sender_id])
     recipient = relationship("User", back_populates="received_messages", foreign_keys=[recipient_id])
 
+    def __repr__(self):
+        return f"<Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id})>"
 
-class Favorite(Base):
-    __tablename__ = "favorites"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    favorite_user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    created_at = Column(TIMESTAMP, server_default=func.now())
-
-    user = relationship("User", back_populates="favorites", foreign_keys=[user_id])
-    favorite_user = relationship("User", back_populates="favorited_by", foreign_keys=[favorite_user_id])
 
 
 
@@ -85,13 +103,9 @@ class SearchPreference(Base):
     min_age = Column(Integer, nullable=True)
     max_age = Column(Integer, nullable=True)
 
-    user = relationship("User", backref="search_preferences")
+    user = relationship("User", back_populates="search_preferences")
 
-
-
-
-
-
-"""
-In models.py, define the User table:
-"""
+    def __repr__(self):
+        return (f"<SearchPreference(id={self.id}, user_id={self.user_id}, "
+                f"preferred_gender='{self.preferred_gender}', preferred_location='{self.preferred_location}', "
+                f"min_age={self.min_age}, max_age={self.max_age})>")

@@ -10,7 +10,6 @@ class UserCreate(BaseModel):
     
     firstname: Optional[str] = None
     lastname: Optional[str] = None
-    profile_picture: Optional[str] = None
     location: Optional[str] = None
     bio: Optional[str] = None
     gender: Optional[str] = None
@@ -65,6 +64,33 @@ class PictureCreate(PictureBase):
 class Picture(PictureBase):
     id: int
     user_id: int
+
+class MessageCreate(BaseModel):
+    sender_id: int
+    recipient_id: int
+    content: str
+
+
+class MessageResponse(BaseModel):
+    id: int
+    sender_id: int
+    recipient_id: int
+    content: str
+    timestamp: datetime
+
+class FavoriteCreate(BaseModel):
+    user_id: int
+    favorite_user_id: int
+
+
+class FavoriteResponse(BaseModel):
+    id: int
+    user_id: int
+    favorite_user_id: int
+
+
+
+
 
     class Config:
         from_attributes = True  # instead of orm_mode = True

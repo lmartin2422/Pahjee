@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ViewProfileComponent } from '../view-profile/view-profile.component';
 
 @Component({
   selector: 'app-favorites',
