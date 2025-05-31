@@ -27,9 +27,8 @@ def get_db():
     finally:
         db.close()
 
+
 # -------------------- AUTH --------------------
-
-
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Pahjee API"}
@@ -74,8 +73,9 @@ def login_user(request: schemas.LoginRequest, db: Session = Depends(get_db)):
 
     return {"message": "Login successful", "user_id": user.id, "username": user.username}
 
-# -------------------- PICTURES --------------------
 
+
+# -------------------- PICTURES --------------------
 @app.post("/upload-picture/{user_id}")
 def upload_picture(user_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
     upload_dir = "uploaded_pictures"
@@ -103,8 +103,9 @@ def set_profile_picture(picture_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Profile picture set successfully"}
 
-# -------------------- MESSAGES --------------------
 
+
+# -------------------- MESSAGES --------------------
 @app.post("/messages/send")
 def send_message(message: schemas.MessageCreate, db: Session = Depends(get_db)):
     new_message = models.Message(**message.dict())
@@ -115,11 +116,12 @@ def send_message(message: schemas.MessageCreate, db: Session = Depends(get_db)):
 
 @app.get("/messages/{user_id}", response_model=List[schemas.MessageResponse])
 def get_messages(user_id: int, db: Session = Depends(get_db)):
-    messages = db.query(models.Message).filter(models.Message.receiver_id == user_id).all()
+    messages = db.query(models.Message).filter(models.Message.recipient_id == user_id).all()
     return messages
 
-# -------------------- FAVORITES --------------------
 
+
+# -------------------- FAVORITES --------------------
 @app.post("/favorites")
 def favorite_user(fav: schemas.FavoriteCreate, db: Session = Depends(get_db)):
     existing = db.query(models.Favorite).filter_by(user_id=fav.user_id, favorite_user_id=fav.favorite_user_id).first()
@@ -135,23 +137,33 @@ def favorite_user(fav: schemas.FavoriteCreate, db: Session = Depends(get_db)):
 def get_favorites(user_id: int, db: Session = Depends(get_db)):
     return db.query(models.Favorite).filter(models.Favorite.user_id == user_id).all()
 
+
+
 # -------------------- UPDATE PROFILE --------------------
+@app.get("/users/{user_id}", response_model=schemas.UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 @app.put("/users/{user_id}")
-def update_profile(user_id: int, user_data: schemas.UserUpdate, db: Session = Depends(get_db)):
+def update_user(user_id: int, updated_data: schemas.UserUpdate, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    for key, value in user_data.dict(exclude_unset=True).items():
+    update_data = updated_data.dict(exclude_unset=True)
+    for key, value in update_data.items():
         setattr(user, key, value)
 
     db.commit()
     db.refresh(user)
-    return user
+    return {"message": "User updated successfully"}
+
+
 
 # -------------------- SEARCH FILTER --------------------
-
 @app.get("/search", response_model=List[schemas.UserResponse])
 def search_users(location: str = None, gender: str = None, lookingfor: str = None, db: Session = Depends(get_db)):
     query = db.query(models.User)

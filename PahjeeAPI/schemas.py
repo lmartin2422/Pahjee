@@ -34,10 +34,15 @@ class UserResponse(BaseModel):
     created_at: datetime
 
 
+    class Config:
+        from_attributes = True
+
+
+
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None  # You might want to hash this again if it's changed
+    # username: Optional[str] = None
+    # email: Optional[EmailStr] = None
+    # password: Optional[str] = None  # You might want to hash this again if it's changed
     firstname: Optional[str] = None
     lastname: Optional[str] = None
     location: Optional[str] = None
@@ -65,6 +70,9 @@ class Picture(PictureBase):
     id: int
     user_id: int
 
+    class Config:
+        from_attributes = True
+
 class MessageCreate(BaseModel):
     sender_id: int
     recipient_id: int
@@ -78,6 +86,9 @@ class MessageResponse(BaseModel):
     content: str
     timestamp: datetime
 
+    class Config:
+        from_attributes = True
+
 class FavoriteCreate(BaseModel):
     user_id: int
     favorite_user_id: int
@@ -87,10 +98,6 @@ class FavoriteResponse(BaseModel):
     id: int
     user_id: int
     favorite_user_id: int
-
-
-
-
 
     class Config:
         from_attributes = True  # instead of orm_mode = True

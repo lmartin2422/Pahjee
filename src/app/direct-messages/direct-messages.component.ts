@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-direct-messages',
@@ -19,7 +20,8 @@ export class DirectMessagesComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.messageForm = this.fb.group({
       message: ['']
@@ -27,6 +29,16 @@ export class DirectMessagesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const token = localStorage.getItem('access_token');
+    const userId = localStorage.getItem('user_id');
+
+    if (!token || !userId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+
+
     this.route.params.subscribe(params => {
       this.recipientId = +params['id']; // Read /messages/:id
       this.fetchMessages();

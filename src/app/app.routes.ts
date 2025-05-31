@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
+import { AuthGuard } from './auth.guard';
 
 
 
@@ -17,15 +18,16 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'home', component: HomeComponent} ,
-    { path: 'messages', component: DirectMessagesComponent},
-    { path: 'messages/:id', component: DirectMessagesComponent },
-    { path: 'explore', component: ExploreComponent},
-    { path: 'favorites', component: FavoritesComponent},
-    { path: 'update-profile', component: UpdateProfileComponent},
-    { path: 'my-profile', component: MyProfileComponent},
-    { path: 'profile/:id', component: ViewProfileComponent},
-    { path: '', component: LoginComponent },
-    { path: '**', redirectTo: '/home', pathMatch: 'full' } // invalid
+    { path: 'messages', component: DirectMessagesComponent, canActivate: [AuthGuard]},
+    { path: 'messages/:id', component: DirectMessagesComponent, canActivate: [AuthGuard] },
+    { path: 'explore', component: ExploreComponent, canActivate: [AuthGuard]},
+    { path: 'favorites', component: FavoritesComponent, canActivate: [AuthGuard]},
+    { path: 'update-profile', component: UpdateProfileComponent, canActivate: [AuthGuard]},
+    { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard]},
+    { path: 'profile/:id', component: ViewProfileComponent, canActivate: [AuthGuard]},
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: '**', redirectTo: '/home', pathMatch: 'full'}
+    
 ];
 
 

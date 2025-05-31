@@ -1,8 +1,8 @@
-from sqlalchemy import (
-    Column, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey
-)
+from sqlalchemy import ( Column, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey)
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
+
+from datetime import datetime  # Add this import at the top
 
 Base = declarative_base()
 
@@ -11,9 +11,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(Text, unique=True, nullable=False)
-    email = Column(Text, unique=True, nullable=False)
-    password_hash = Column(Text, nullable=False)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
 
     firstname = Column(String, nullable=True)
     lastname = Column(String, nullable=True)
@@ -24,7 +24,8 @@ class User(Base):
     lookingfor = Column(String, nullable=True)
     sexualorientation = Column(String, nullable=True)
     professionindustry = Column(String, nullable=True)
-    created_at = Column(TIMESTAMP, server_default=func.now())
+
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
     # Relationships
     pictures = relationship("Picture", back_populates="user", cascade="all, delete")

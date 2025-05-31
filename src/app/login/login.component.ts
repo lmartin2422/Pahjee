@@ -30,25 +30,32 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.http.post('http://127.0.0.1:8000/login', this.loginForm.value).subscribe({
-        next: (res: any) => {
-          alert('Login successful!');
-          console.log(res);
-          localStorage.setItem('user_id', res.user_id);
-          this.userService.setUsername(res.username); // ✅ use shared service
-          
-          this.router.navigate(['/my-profile']);
-        },
-        error: (err) => {
-          console.error(err);
-          this.loginError = err.error?.detail || 'Login failed. Please try again.';
-        }
-      });
-    } else {
-      this.loginForm.markAllAsTouched();
-    }
+  if (this.loginForm.valid) {
+    this.http.post('http://127.0.0.1:8000/login', this.loginForm.value).subscribe({
+      next: (res: any) => {
+        alert('Login successful!');
+        console.log('Login response:', res);
+        console.log('Token:', res.access_token);  // Confirm key name
+
+        // ✅ Store the token and user ID
+        localStorage.setItem('access_token', res.access_token);  // <- THIS WAS MISSING
+        localStorage.setItem('user_id', res.user_id);
+        this.userService.setUsername(res.username);
+
+        this.router.navigate(['/my-profile']).then(success => {
+          console.log('Navigated to /my-profile:', success);
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.loginError = err.error?.detail || 'Login failed. Please try again.';
+      }
+    });
+  } else {
+    this.loginForm.markAllAsTouched();
   }
+}
+
 
   goToSignup() {
     this.router.navigate(['/signup']);

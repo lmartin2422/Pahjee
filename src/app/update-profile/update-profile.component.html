@@ -15,7 +15,6 @@
     </div>
 
 <!-- Upload Pics Link -->
-<a href="#" (click)="openUploadModal()">Upload Pics</a>
 <a href="#" (click)="showUploadModal = true">Upload Pics</a>
 <app-upload-modal *ngIf="showUploadModal"></app-upload-modal>
 
@@ -39,7 +38,7 @@
     <input type="file" (change)="onFileSelected($event)" [disabled]="uploadedImages.length >= 6" multiple accept="image/*">
 
     <!-- Save / Cancel Buttons -->
-    <div class="modal-actions">
+<div class="modal-actions">
       <button (click)="savePictures()">Save</button>
       <button (click)="closeUploadModal()">Cancel</button>
     </div>
@@ -47,10 +46,29 @@
 </div>
 
     <!-- Location -->
-    <div class="form-group">
-      <label>Location</label>
-      <input class="form-control" formControlName="location">
-    </div>
+<div class="form-group position-relative">
+  <label>Location</label>
+  <input
+    class="form-control"
+    formControlName="location"
+    (input)="onLocationInput()"
+    (focus)="locationFocused = true"
+    (blur)="onLocationBlur()"
+    autocomplete="off"
+  />
+  <ul
+    *ngIf="locationSuggestions.length > 0 && locationFocused"
+    class="suggestions-list"
+  >
+    <li
+      *ngFor="let suggestion of locationSuggestions"
+      (mousedown)="selectLocation(suggestion)"
+    >
+      {{ suggestion }}
+    </li>
+  </ul>
+</div>
+
 
     <!-- Bio -->
     <div class="form-group">
