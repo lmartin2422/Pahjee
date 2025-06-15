@@ -22,3 +22,25 @@
     font-size: 18px;
     margin: 5px 0;
 }
+
+
+.picture-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.pic-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+.pic-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+.pic-buttons {
+  margin-top: 8px;
+}
+

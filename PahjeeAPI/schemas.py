@@ -33,16 +33,11 @@ class UserResponse(BaseModel):
     professionindustry: Optional[str]
     created_at: datetime
 
-
     class Config:
         from_attributes = True
 
 
-
 class UserUpdate(BaseModel):
-    # username: Optional[str] = None
-    # email: Optional[EmailStr] = None
-    # password: Optional[str] = None  # You might want to hash this again if it's changed
     firstname: Optional[str] = None
     lastname: Optional[str] = None
     location: Optional[str] = None
@@ -52,6 +47,23 @@ class UserUpdate(BaseModel):
     lookingfor: Optional[str] = None
     sexualorientation: Optional[str] = None
     professionindustry: Optional[str] = None
+
+
+class UserSearch(BaseModel):
+    location: Optional[str] = None
+    gender: Optional[str] = None
+    lookingfor: Optional[str] = None
+    sexualorientation: Optional[str] = None
+    min_age: Optional[int] = None
+    max_age: Optional[int] = None
+
+
+class SearchFilters(BaseModel):
+    gender: Optional[str]
+    lookingfor: Optional[str]
+    location: Optional[str]
+    min_age: Optional[int]
+    max_age: Optional[int]
 
 
 class LoginRequest(BaseModel):

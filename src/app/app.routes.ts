@@ -1,7 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
-import { ExploreComponent } from './explore/explore.component';
+import { SearchComponent } from './search/search.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { HeaderComponent } from './header/header.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
@@ -20,7 +20,7 @@ export const routes: Routes = [
     { path: 'home', component: HomeComponent} ,
     { path: 'messages', component: DirectMessagesComponent, canActivate: [AuthGuard]},
     { path: 'messages/:id', component: DirectMessagesComponent, canActivate: [AuthGuard] },
-    { path: 'explore', component: ExploreComponent, canActivate: [AuthGuard]},
+    { path: 'explore', component: SearchComponent, canActivate: [AuthGuard]},
     { path: 'favorites', component: FavoritesComponent, canActivate: [AuthGuard]},
     { path: 'update-profile', component: UpdateProfileComponent, canActivate: [AuthGuard]},
     { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard]},

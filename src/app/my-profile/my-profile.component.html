@@ -2,11 +2,33 @@
   <h2>{{ user.firstname }} {{ user.lastname }}'s Profile</h2>
 
   <div class="profile-picture">
-    <img [src]="user.profile_picture || 'https://via.placeholder.com/150'" alt="Profile Picture" />
+    <img [src]="user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture" alt="Profile Picture" />
   </div>
 
+  <hr />
+<h3>Your Pictures</h3>
+<div class="picture-grid" *ngIf="pictures.length > 0; else noPics">
+  <div class="pic-card" *ngFor="let pic of pictures">
+  <img [src]="pic.image_url" alt="User Picture" class="pic-thumbnail" />
+
+    <!-- <div class="pic-buttons">
+      <button (click)="setAsProfile(pic.image_url)" class="btn btn-sm btn-primary">
+        Set as Profile
+      </button>
+      <button (click)="deletePicture(pic.id)" class="btn btn-sm btn-danger">
+        Delete
+      </button>
+    </div> -->
+  </div>
+</div>
+
+<ng-template #noPics>
+  <p>You haven't uploaded any pictures yet.</p>
+</ng-template>
+
+
   <p><strong>Username:</strong> {{ user.username }}</p>
-  <p><strong>Email:</strong> {{ user.email }}</p>
+  <!-- <p><strong>Email:</strong> {{ user.email }}</p> -->
   <p><strong>Location:</strong> {{ user.location || 'Not specified' }}</p>
   <p><strong>Bio:</strong> {{ user.bio || 'Not provided' }}</p>
   <p><strong>Gender:</strong> {{ user.gender || 'Not specified' }}</p>
@@ -15,7 +37,7 @@
   <p><strong>Sexual Orientation:</strong> {{ user.sexualorientation || 'Not specified' }}</p>
   <p><strong>Profession/Industry:</strong> {{ user.professionindustry || 'Not specified' }}</p>
 
-  <button class="btn btn-secondary mt-3" routerLink="/update-profile">Edit Profile</button>
+  <a routerLink="/update-profile" class="btn btn-secondary mt-3">Edit Profile</a>
 </div>
 
 <div *ngIf="!user">

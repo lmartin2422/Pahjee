@@ -40,7 +40,6 @@ class User(Base):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
 
 
-
 class Favorite(Base):
     __tablename__ = "favorites"
 
@@ -49,16 +48,12 @@ class Favorite(Base):
     favorited_user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(TIMESTAMP, server_default=func.now())
 
-
     # RELATIONSHIPS
     user = relationship("User", foreign_keys=[user_id], back_populates="favorites_sent")
     favorited_user = relationship("User", foreign_keys=[favorited_user_id], back_populates="favorites_received")
 
-
     def __repr__(self):
         return f"<Favorite(id={self.id}, user_id={self.user_id}, favorite_user_id={self.favorite_user_id})>"
-
-
 
 
 class Picture(Base):
@@ -67,12 +62,12 @@ class Picture(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     image_url = Column(String, nullable=False)
-    is_profile_picture = Column(Boolean, default=False)
+    is_profile_pic = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="pictures")
 
     def __repr__(self):
-        return f"<Picture(id={self.id}, user_id={self.user_id}, image_url='{self.image_url}', is_profile_picture={self.is_profile_picture})>"
+        return f"<Picture(id={self.id}, user_id={self.user_id}, image_url='{self.image_url}', is_profile_pic={self.is_profile_pic})>"
 
 
 class Message(Base):
@@ -89,9 +84,6 @@ class Message(Base):
 
     def __repr__(self):
         return f"<Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id})>"
-
-
-
 
 
 class SearchPreference(Base):

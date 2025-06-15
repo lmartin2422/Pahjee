@@ -1,23 +1,61 @@
-<div class="upload-modal">
-  <h3>Upload Pictures</h3>
+<!-- Fullscreen Overlay -->
+<div
+  class="modal-backdrop"
+  (click)="closeModal()"
+  style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1040;"
+></div>
 
-  <input type="file" (change)="onFileChange($event)" multiple accept="image/*" />
+<!-- Centered Modal Box -->
+<div
+  class="modal show d-block"
+  tabindex="-1"
+  style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; z-index: 1050; width: 400px;"
+>
+  <h3 class="mb-3">Upload Pictures</h3>
 
-  <div class="image-grid">
-    <div class="image-preview" *ngFor="let file of selectedFiles; let i = index">
-      <img [src]="getImagePreview(file)" width="100" height="100">
-      <div class="actions">
-        <button (click)="removeFile(i)">🗑 Remove</button>
-        <button (click)="setProfilePicture(i)">
-          {{ profilePicIndex === i ? '✔ Profile Pic' : 'Set as Profile Pic' }}
-        </button>
+  <!-- File Input -->
+  <input
+    id="fileInput"
+    class="form-control mb-3"
+    type="file"
+    (change)="onFileSelected($event)"
+    [disabled]="uploadedImages.length >= 6"
+    accept="image/*"
+    multiple
+  />
+
+  <!-- Image Previews with Profile Select -->
+  <div class="d-flex flex-wrap mb-3">
+    <div
+      *ngFor="let img of uploadedImages; let i = index"
+      class="position-relative me-2 mb-2 text-center"
+      style="width: 70px;"
+    >
+      <img
+        [src]="img.url"
+        alt="preview"
+        width="60"
+        height="60"
+        [style.border]="profilePicIndex === i ? '2px solid #007bff' : '1px solid #ccc'"
+        style="object-fit: cover; border-radius: 4px;"
+      />
+      <div class="form-check mt-1">
+        <input
+          type="radio"
+          name="profilePic"
+          class="form-check-input"
+          [value]="i"
+          [checked]="profilePicIndex === i"
+          (change)="profilePicIndex = i"
+        />
+        <label class="form-check-label small">Profile</label>
       </div>
     </div>
   </div>
 
-  <button (click)="uploadImages()" [disabled]="uploading || !selectedFiles.length">
-    {{ uploading ? 'Uploading...' : 'Upload' }}
-  </button>
-
-  <p *ngIf="error" class="error">{{ error }}</p>
+  <!-- Buttons -->
+  <div class="text-end">
+    <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="uploadPictures()">Upload</button>
+  </div>
 </div>

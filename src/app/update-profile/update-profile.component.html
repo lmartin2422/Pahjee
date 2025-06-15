@@ -2,6 +2,7 @@
   <h2>Update Your Profile</h2>
 
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
     <!-- First Name -->
     <div class="form-group">
       <label>First Name</label>
@@ -14,60 +15,30 @@
       <input class="form-control" formControlName="lastname">
     </div>
 
-<!-- Upload Pics Link -->
-<a href="#" (click)="showUploadModal = true">Upload Pics</a>
-<app-upload-modal *ngIf="showUploadModal"></app-upload-modal>
-
-
-<!-- Modal -->
-<div *ngIf="showUploadModal" class="modal-backdrop">
-  <div class="modal">
-    <h3>Upload Pictures (Max 6)</h3>
-    
-    <!-- Image Previews -->
-    <div class="preview-container">
-      <div *ngFor="let img of uploadedImages; let i = index" class="image-slot">
-        <img [src]="img.url" alt="Uploaded Image" class="preview-img">
-        <input type="radio" name="profilePic" [value]="img.url" (change)="selectProfilePicture(img.url)" [checked]="img.url === selectedProfilePic">
-        <label>Set as profile pic</label>
-        <button type="button" (click)="removeImage(i)">Remove</button>
-      </div>
-    </div>
-
-    <!-- Upload Input -->
-    <input type="file" (change)="onFileSelected($event)" [disabled]="uploadedImages.length >= 6" multiple accept="image/*">
-
-    <!-- Save / Cancel Buttons -->
-<div class="modal-actions">
-      <button (click)="savePictures()">Save</button>
-      <button (click)="closeUploadModal()">Cancel</button>
-    </div>
-  </div>
-</div>
 
     <!-- Location -->
-<div class="form-group position-relative">
-  <label>Location</label>
-  <input
-    class="form-control"
-    formControlName="location"
-    (input)="onLocationInput()"
-    (focus)="locationFocused = true"
-    (blur)="onLocationBlur()"
-    autocomplete="off"
-  />
-  <ul
-    *ngIf="locationSuggestions.length > 0 && locationFocused"
-    class="suggestions-list"
-  >
-    <li
-      *ngFor="let suggestion of locationSuggestions"
-      (mousedown)="selectLocation(suggestion)"
-    >
-      {{ suggestion }}
-    </li>
-  </ul>
-</div>
+    <div class="form-group position-relative">
+      <label>Location</label>
+      <input
+        class="form-control"
+        formControlName="location"
+        (input)="onLocationInput()"
+        (focus)="locationFocused = true"
+        (blur)="onLocationBlur()"
+        autocomplete="off"
+      />
+      <ul
+        *ngIf="locationSuggestions.length > 0 && locationFocused"
+        class="suggestions-list"
+      >
+        <li
+          *ngFor="let suggestion of locationSuggestions"
+          (mousedown)="selectLocation(suggestion)"
+        >
+          {{ suggestion }}
+        </li>
+      </ul>
+    </div>
 
 
     <!-- Bio -->
@@ -118,7 +89,58 @@
       </select>
     </div>
 
+
+    <!-- Modal -->
+    <app-upload-modal
+      *ngIf="showUploadModal"
+      (close)="showUploadModal = false"
+    ></app-upload-modal>
+
+    <!-- Previews -->
+    <div class="preview-container">
+      <div *ngFor="let img of uploadedImages; let i = index" class="image-slot">
+        <img [src]="img.url" class="preview-img" alt="Uploaded Image">
+        <input type="radio" name="profilePic" [value]="img.url" 
+              (change)="selectProfilePicture(img.url)" 
+              [checked]="img.url === selectedProfilePic">
+        <label>Set as Profile Pic</label>
+        <button type="button" (click)="removeImage(i)">Remove</button>
+      </div>
+    </div>
+
+    <!-- Upload Pics -->
+    <p></p>
+     
+    <h1>Upload Pics</h1>
+    <div class="form-group mt-2">
+      <label for="fileInput">Choose Images</label>
+      <input
+        id="fileInput"
+        class="form-control"
+        type="file"
+        (change)="onFileSelected($event)"
+        [disabled]="uploadedImages.length >= 6"
+        accept="image/*"
+        multiple
+      />
+      <button type="button" class="btn btn-outline-danger mt-2" (click)="cancelUpload()">Cancel</button>
+    </div>
+
+
+    <!-- Modal Buttons -->
+    <div class="modal-actions mt-3">
+      <div class="modal-actions">
+          <button type="button" class="btn btn-danger me-2" (click)="savePictures()">Save Pics</button>
+          <button type="button" class="btn btn-outline-danger" (click)="closeUploadModal()">Cancel</button>
+        </div>
+        </div>
+      <!-- </div>
+    </div> -->
+
+
     <!-- Save Button -->
+   <div>
     <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-  </form>
+     </div>
+   </form>
 </div>

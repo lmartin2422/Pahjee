@@ -1,38 +1,35 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+# routers/pictures.py
+
+from fastapi import APIRouter, UploadFile, File, Form, Depends
 from sqlalchemy.orm import Session
-import shutil
-import uuid
-import os
-
-import models
-import schemas
-import database
-from models import Picture, User
-
-from dependencies import get_current_user  # adjust based on your setup
+from database import get_db
+from services import picture_service
+from typing import List, Optional
 
 router = APIRouter()
 
-UPLOAD_DIR = "uploads/"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+@router.post("/users/{user_id}/upload_pictures")
+def upload_pictures(
+    user_id: int,
+    files: List[UploadFile] = File(...),
+    profile_pic_filename: Optional[str] = Form(None),
+    db: Session = Depends(get_db)
+):
+    return picture_service.save_pictures(user_id, files, profile_pic_filename, db)
 
-@router.post("/users/{user_id}/upload-picture", response_model=schemas.Picture)
-def upload_picture(user_id: int, file: UploadFile = File(...), db: Session = Depends(database.get_db)):
-    if file.content_type not in ["image/jpeg", "image/png"]:
-        raise HTTPException(status_code=400, detail="Invalid image format")
+# @router.get("/users/{user_id}/pictures")
+# def get_user_pictures(user_id: int, db: Session = Depends(get_db)):
+#     return picture_service.get_user_pictures(user_id, db)
 
-    ext = file.filename.split(".")[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    file_path = os.path.join(UPLOAD_DIR, filename)
+@router.get("/pictures/user/{user_id}")
+def get_user_pictures(user_id: int, db: Session = Depends(get_db)):
+    return picture_service.get_user_pictures(user_id, db)
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
 
-    image_url = f"/static/{filename}"  # or full URL if using a domain
+@router.put("/users/{user_id}/pictures/{picture_id}/set-profile")
+def set_profile_picture(user_id: int, picture_id: int, db: Session = Depends(get_db)):
+    return picture_service.set_profile_picture(user_id, picture_id, db)
 
-    new_pic = models.Picture(user_id=user_id, image_url=image_url)
-    db.add(new_pic)
-    db.commit()
-    db.refresh(new_pic)
-
-    return new_pic
+@router.delete("/users/{user_id}/pictures/{picture_id}")
+def delete_picture(user_id: int, picture_id: int, db: Session = Depends(get_db)):
+    return picture_service.delete_picture(user_id, picture_id, db)

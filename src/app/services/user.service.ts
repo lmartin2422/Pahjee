@@ -5,8 +5,6 @@ import { SignupData, User } from '../models/user.model';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -40,9 +38,7 @@ export class UserService {
   loginUser(credentials: { username: string, password: string }) {
     return this.http.post<any>(`${this.baseUrl}/login`, credentials);
   }
-
- 
-  
+   
   registerUser(user: SignupData): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/register`, user);
   }
@@ -59,9 +55,10 @@ export class UserService {
     return this.http.delete(`${this.baseUrl}/users/${userId}`);
   }
 
-   searchUsers(filters: any) {
-    return this.http.post(`${this.baseUrl}/search`, filters);
+  searchUsers(filters: any): Observable<User[]> {
+    return this.http.post<User[]>(`${this.baseUrl}/search`, filters);
   }
+
 
   favoriteUser(userId: number, favoriteUserId: number) {
     return this.http.post(`${this.baseUrl}/favorite`, {
@@ -77,5 +74,4 @@ export class UserService {
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/users/${id}`);
   }
-
 }

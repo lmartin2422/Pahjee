@@ -1,10 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { PictureService } from '../services/picture.service';
-
-
 
 @Component({
   selector: 'app-upload-modal',
@@ -14,64 +11,71 @@ import { PictureService } from '../services/picture.service';
   styleUrl: './upload-modal.component.css',
 })
 export class UploadModalComponent {
-  selectedFiles: File[] = [];
-  profilePicIndex: number | null = null;
-  uploading: boolean = false;
-  error: string | null = null;
+  @Output() close = new EventEmitter<void>();
 
-  constructor(private pictureService: PictureService) {}
+  profilePicIndex: number = 0; // default to first image
+  uploadedImages: { file: File; url: string }[] = [];
 
+  constructor(private http: HttpClient) {}
 
-  onFileChange(event: any): void {
-    const files = Array.from(event.target.files) as File[];
+  onFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length + this.uploadedImages.length <= 6) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.uploadedImages.push({ file, url: e.target.result });
+        };
+        reader.readAsDataURL(file);
+      });
+    } else {
+      alert('Maximum 6 images allowed.');
+    }
+  }
 
-    if (files.length + this.selectedFiles.length > 6) {
-      alert('You can upload a maximum of 6 pictures.');
+  uploadPictures(): void {
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+      alert('User not logged in.');
       return;
     }
 
-    this.selectedFiles.push(...files);
-  }
-
-  setProfilePicture(index: number): void {
-    this.profilePicIndex = index;
-  }
-
-  getImagePreview(file: File): string {
-  return URL.createObjectURL(file);
-  }
-
-  removeFile(index: number): void {
-    this.selectedFiles.splice(index, 1);
-    if (this.profilePicIndex === index) {
-      this.profilePicIndex = null;
-    } else if (this.profilePicIndex && this.profilePicIndex > index) {
-      this.profilePicIndex--; // adjust index if needed
+    if (this.uploadedImages.length === 0) {
+      alert('Please select at least one image to upload.');
+      return;
     }
+
+    const formData = new FormData();
+
+    // Add all images
+    this.uploadedImages.forEach((imgObj) => {
+      formData.append('files', imgObj.file);
+    });
+
+    // Add profile pic filename with generated pattern
+    const profileFile = this.uploadedImages[this.profilePicIndex]?.file;
+    if (profileFile) {
+      // Simulate backend filename format: userId_timestamp_filename
+      const timestamp = Date.now(); // close enough for matching
+      const filename = `${userId}_${timestamp}_${profileFile.name}`;
+      formData.append('profile_pic_filename', filename);
+    }
+
+    this.http.post(`http://localhost:8000/users/${userId}/upload_pictures`, formData)
+      .subscribe({
+        next: () => {
+          alert('Images uploaded successfully!');
+          this.uploadedImages = [];
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Upload failed', err);
+          alert('Image upload failed. Please try again.');
+        }
+      });
   }
 
-  uploadImages(): void {
-    const userId = Number(localStorage.getItem('userId'));
-    if (!userId || this.selectedFiles.length === 0) return;
-
-    this.uploading = true;
-    this.error = null;
-
-    const uploads = this.selectedFiles.map((file, index) =>
-      this.pictureService.uploadPicture(userId, file, index === this.profilePicIndex)
-    );
-
-    Promise.all(uploads.map(u => u.toPromise()))
-      .then(() => {
-        this.uploading = false;
-        alert('Pictures uploaded successfully.');
-        this.selectedFiles = [];
-        this.profilePicIndex = null;
-      })
-      .catch(err => {
-        this.uploading = false;
-        this.error = 'Upload failed. Please try again.';
-        console.error(err);
-      });
+  closeModal(): void {
+    this.close.emit();
   }
 }

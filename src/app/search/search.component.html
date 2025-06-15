@@ -1,7 +1,7 @@
 <div class="search-container">
     <div class="search-category">
         <label for="gender">Gender:</label>
-        <select id="gender">
+        <select id="gender" [(ngModel)]="filters.gender">
             <option value="" disabled selected>Choose...</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -11,7 +11,7 @@
 
     <div class="search-category">
         <label for="age">Age Range:</label>
-        <select id="age">
+        <select id="age" [(ngModel)]="filters.ageRange">
             <option value="" disabled selected>Choose...</option>
             <option value="18-24">18-24</option>
             <option value="25-29">25-29</option>
@@ -22,7 +22,7 @@
 
     <div class="search-category">
         <label for="orientation">Sexual Orientation:</label>
-        <select id="orientation">
+        <select id="orientation" [(ngModel)]="filters.lookingfor">
             <option value="" disabled selected>Choose...</option>
             <option value="straight">Straight</option>
             <option value="gay">Gay</option>
@@ -44,7 +44,7 @@
 
     <div class="search-category">
         <label for="proximity">State:</label>
-        <select id="proximity">
+        <select id="proximity" [(ngModel)]="filters.location">
             <option value="" disabled selected>Choose...</option>
             <option value="coming soon">coming soon</option>
         </select>
@@ -52,7 +52,7 @@
 
     <!-- Search Button -->
     <div class="search-category">
-        <button class="search-button" onclick="performSearch()">Search</button>
+        <button class="search-button" (click)="performSearch()">Search</button>
     </div>
 
 

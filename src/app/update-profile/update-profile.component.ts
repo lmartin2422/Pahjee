@@ -38,7 +38,8 @@ export class UpdateProfileComponent implements OnInit {
       birthdate: [''],
       lookingfor: [''],
       sexualorientation: [''],
-      professionindustry: ['']
+      professionindustry: [''],
+       profile_picture: ['']  // ✅ Add this line
     });
   }
 
@@ -88,19 +89,17 @@ ngOnInit(): void {
 
 
 showUploadModal = false;
-uploadedImages: { file: File, url: string }[] = [];
+uploadedImageFiles: File[] = [];  // Just the raw files for upload
+uploadedImages: { file: File; url: string }[] = [];  // For display only
+
 selectedProfilePic: string = '';
 
-openUploadModal() {
-  this.showUploadModal = true;
-}
-
-closeUploadModal() {
-  this.showUploadModal = false;
-}
 
 onFileSelected(event: any) {
   const files: FileList = event.target.files;
+
+  console.log('Files selected:', files); // ✅ Add this line
+
   if (files && files.length + this.uploadedImages.length <= 6) {
     Array.from(files).forEach(file => {
       const reader = new FileReader();
@@ -113,6 +112,71 @@ onFileSelected(event: any) {
     alert('Maximum 6 images allowed.');
   }
 }
+
+
+uploadPictures(): void {
+  console.log('Upload button clicked'); // ✅ Add this line
+  if (this.uploadedImages.length === 0) {
+    alert('Please select at least one image to upload.');
+    return;
+  }
+
+  const formData = new FormData();
+  this.uploadedImages.forEach((imgObj) => {
+    formData.append('files', imgObj.file); // ✅ Use imgObj.file, not the whole object
+  });
+
+  this.http.post('/api/upload', formData).subscribe({
+    next: (res) => {
+      console.log('Upload success:', res);
+      alert('Images uploaded successfully!');
+      this.uploadedImages = [];
+    },
+    error: (err) => {
+      console.error('Upload failed:', err);
+      alert('Upload failed.');
+    },
+  });
+}
+
+savePictures() {
+  const userId = localStorage.getItem('user_id');
+  if (!userId || this.uploadedImages.length === 0) return;
+
+  const formData = new FormData();
+  this.uploadedImages.forEach(img => formData.append('files', img.file));
+  const selectedName = this.selectedProfilePic?.split('/').pop();
+  formData.append('profile_pic_filename', selectedName || '');
+  
+  this.http.post(`http://127.0.0.1:8000/users/${userId}/upload_pictures`, formData)
+    .subscribe({
+      next: res => {
+        alert('Upload successful!');
+        this.closeUploadModal();
+      },
+      error: err => {
+        console.error(err);
+        alert('Upload failed');
+      }
+    });
+  }
+
+openUploadModal(event: Event): void {
+  event.preventDefault();
+  this.showUploadModal = true;
+}
+
+cancelUpload() {
+  this.uploadedImages = [];
+  this.selectedProfilePic = '';
+  this.closeUploadModal();
+}
+
+
+closeUploadModal() {
+  this.showUploadModal = false;
+}
+
 
 removeImage(index: number) {
   this.uploadedImages.splice(index, 1);
@@ -141,7 +205,6 @@ fetchLocationSuggestions(query: string) {
 }
 
 
-
 selectLocation(location: string) {
   this.profileForm.get('location')?.setValue(location);
   this.locationSuggestions = [];
@@ -149,32 +212,10 @@ selectLocation(location: string) {
 }
 
 
-
 onLocationBlur() {
   setTimeout(() => {
     this.locationFocused = false;
   }, 200); // delay to allow click
-}
-
-
-savePictures() {
-  const userId = localStorage.getItem('user_id');
-
-  if (!userId || this.uploadedImages.length === 0) return;
-
-  const formData = new FormData();
-  this.uploadedImages.forEach(image => formData.append('pictures', image.file));
-  formData.append('profile_picture', this.selectedProfilePic);
-
-  this.http.post(`http://127.0.0.1:8000/users/${userId}/upload-pictures`, formData).subscribe({
-    next: () => {
-      // PATCH the form with the new profile picture
-      this.profileForm.patchValue({ profile_picture: this.selectedProfilePic });
-      alert('Pictures uploaded!');
-      this.closeUploadModal();
-    },
-    error: (err) => alert('Upload failed: ' + err.message)
-  });
 }
 
 
