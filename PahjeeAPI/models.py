@@ -4,6 +4,9 @@ from sqlalchemy.sql import func
 
 from datetime import datetime  # Add this import at the top
 
+from database import Base
+
+
 Base = declarative_base()
 
 
@@ -36,6 +39,9 @@ class User(Base):
     favorites_sent = relationship("Favorite", foreign_keys="[Favorite.user_id]", back_populates="user")
     favorites_received = relationship("Favorite", foreign_keys="[Favorite.favorited_user_id]", back_populates="favorited_user")
 
+    profile_picture = relationship("ProfilePicture", back_populates="user", uselist=False)
+
+    
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
 
@@ -102,3 +108,13 @@ class SearchPreference(Base):
         return (f"<SearchPreference(id={self.id}, user_id={self.user_id}, "
                 f"preferred_gender='{self.preferred_gender}', preferred_location='{self.preferred_location}', "
                 f"min_age={self.min_age}, max_age={self.max_age})>")
+    
+
+class ProfilePicture(Base):
+    __tablename__ = "profile_pictures"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    image_url = Column(String, nullable=False)
+
+    user = relationship("User", back_populates="profile_picture")

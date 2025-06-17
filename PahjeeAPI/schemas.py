@@ -85,6 +85,22 @@ class Picture(PictureBase):
     class Config:
         from_attributes = True
 
+
+class ProfilePictureBase(BaseModel):
+    image_url: str
+
+class ProfilePictureCreate(ProfilePictureBase):
+    user_id: int
+
+class ProfilePicture(ProfilePictureBase):
+    id: int
+    user_id: int
+
+    class Config:
+        orm_mode = True
+
+
+
 class MessageCreate(BaseModel):
     sender_id: int
     recipient_id: int

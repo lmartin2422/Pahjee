@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './my-profile.component.css'
 })
 export class MyProfileComponent implements OnInit {
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
   user: any = null;
   pictures: any[] = [];
   backendUrl: string = 'http://127.0.0.1:8000'; // 👈 added
@@ -64,29 +66,79 @@ export class MyProfileComponent implements OnInit {
     }
   }
 
-  // deletePicture(pictureId: number): void {
-  //   if (confirm('Are you sure you want to delete this picture?')) {
-  //     this.http.delete(`${this.backendUrl}/pictures/${pictureId}`).subscribe({
-  //       next: () => {
-  //         this.loadPictures();
-  //         alert('Picture deleted.');
-  //       },
-  //       error: (err: any) => alert('Error deleting picture: ' + err.message),
-  //     });
-  //   }
-  // }
 
-  // setAsProfile(imageUrl: string) {
-  //   const userId = localStorage.getItem('user_id');
-  //   const cleanUrl = imageUrl.replace(this.backendUrl, '');
+  uploadProfilePicture(event: any): void {
+  const file = event.target.files[0];
+  if (!file) return;
 
-  //   this.http.post(`${this.backendUrl}/pictures/set-profile`, {
-  //     user_id: userId,
-  //     image_url: cleanUrl
-  //   }).subscribe(() => {
-  //     this.loadProfile();
-  //   });
-  // }
+  const formData = new FormData();
+  formData.append('file', file);
+  const userId = localStorage.getItem('user_id');
+  formData.append('user_id', userId!);
+
+  this.http.post(`${this.backendUrl}/profile-picture/upload?user_id=${userId}`, formData).subscribe({
+    next: (res: any) => {
+      this.user.profile_picture = res.image_url;
+    },
+    error: err => {
+      alert('Upload failed: ' + err.message);
+    }
+  });
+}
+
+handleFileSelection(event: any): void {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  this.selectedFile = file;
+
+  // Generate preview
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.previewUrl = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+confirmUpload(): void {
+  if (!this.selectedFile) return;
+
+  const formData = new FormData();
+  const userId = localStorage.getItem('user_id');
+  formData.append('file', this.selectedFile);
+  formData.append('user_id', userId!);
+
+  this.http.post(`${this.backendUrl}/profile-picture/upload?user_id=${userId}`, formData).subscribe({
+    next: (res: any) => {
+      this.user.profile_picture = res.image_url;
+      this.previewUrl = null;
+      this.selectedFile = null;
+    },
+    error: err => {
+      alert('Upload failed: ' + err.message);
+    }
+  });
+}
+
+cancelUpload(): void {
+  this.selectedFile = null;
+  this.previewUrl = null;
+}
+
+
+deleteProfilePicture(): void {
+  const userId = localStorage.getItem('user_id');
+  this.http.delete(`${this.backendUrl}/profile-picture/${userId}`).subscribe({
+    next: () => {
+      this.user.profile_picture = null;
+      alert('Profile picture deleted!');
+    },
+    error: err => alert('Delete failed: ' + err.message)
+  });
+}
+
+
+
 
 
   onSubmit(): void {

@@ -9,7 +9,10 @@ import shutil
 import os
 from typing import List
 
-from routers import auth, pictures, messages, favorites, users
+from routers import auth, pictures, messages, favorites, users, profile_pictures
+
+# from models import ProfilePicture  # Make sure this import is included
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -33,6 +36,7 @@ app.include_router(pictures.router)
 app.include_router(messages.router)
 app.include_router(favorites.router)
 app.include_router(users.router)
+app.include_router(profile_pictures.router)
 
 
 
