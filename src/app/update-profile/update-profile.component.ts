@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UploadModalComponent } from '../upload-modal/upload-modal.component';
@@ -13,7 +13,7 @@ import { of } from 'rxjs';
 @Component({
   selector: 'app-update-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, UploadModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, UploadModalComponent, HttpClientModule],
   templateUrl: './update-profile.component.html',
   styleUrl: './update-profile.component.css'
 })

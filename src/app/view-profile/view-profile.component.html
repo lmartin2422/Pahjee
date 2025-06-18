@@ -1,14 +1,23 @@
 <div *ngIf="userData">
-  <h2>{{ userData.username }}'s Profile</h2>
-  <p>{{ userData.bio }}</p>
+  <h1>{{ userData.username }}'s Profile</h1>
+  <p>Name: {{ userData.firstname }}</p>
+  <p>Looking For: {{ userData.lookingfor }}</p>
+  <p>Orientation: {{ userData.sexualorientation }}</p>
   <p>Gender: {{ userData.gender }}</p>
   <p>Location: {{ userData.location }}</p>
+  <p>Birthdate: {{ userData.birthdate }}</p>
+  <p>Profession: {{ userData.professionindustry }}</p>
+  <p>{{ userData.bio }}</p>
+
+  <!-- Add to Favorites Button -->
+  <button (click)="addFavorite()">Add to Favorites</button>
 
   <!-- Message Form -->
-  <div>
-    <h3>Send Message</h3>
+  <div style="margin-top: 20px;">
+    <h2>Send Message</h2>
     <form (ngSubmit)="sendMessage()">
       <textarea [(ngModel)]="messageContent" name="messageContent" required></textarea>
+      <br>
       <button type="submit">Send</button>
     </form>
   </div>

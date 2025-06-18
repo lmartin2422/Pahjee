@@ -24,7 +24,7 @@ export const routes: Routes = [
     { path: 'favorites', component: FavoritesComponent, canActivate: [AuthGuard]},
     { path: 'update-profile', component: UpdateProfileComponent, canActivate: [AuthGuard]},
     { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard]},
-    { path: 'profile/:id', component: ViewProfileComponent, canActivate: [AuthGuard]},
+    { path: 'view-profile/:id', component: ViewProfileComponent, canActivate: [AuthGuard]},
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: '**', redirectTo: '/home', pathMatch: 'full'}
     

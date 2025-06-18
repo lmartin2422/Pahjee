@@ -48,6 +48,19 @@ export class MyProfileComponent implements OnInit {
     if (userId) {
       this.http.get(`${this.backendUrl}/users/${userId}`).subscribe((data: any) => {
         this.user = data;
+
+        // 🔁 Fetch profile picture separately and merge it into the user object
+        this.http.get(`${this.backendUrl}/profile-picture/${userId}`).subscribe({
+          next: (picData: any) => {
+            this.user.profile_picture = picData.image_url.startsWith('http')
+              ? picData.image_url
+              : `${this.backendUrl}${picData.image_url}`;
+          },
+          error: err => {
+            console.warn("No profile picture found:", err.message);
+            this.user.profile_picture = null;
+          }
+        });
       });
     }
   }

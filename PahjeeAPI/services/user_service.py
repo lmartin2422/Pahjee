@@ -73,3 +73,5 @@ def favorite_user(db: Session, user_id: int, favorite_user_id: int):
 
 def get_favorites(db: Session, user_id: int):
     return db.query(Favorite).filter(Favorite.user_id == user_id).all()
+
+

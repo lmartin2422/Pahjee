@@ -5,7 +5,7 @@
         ☰
       </button>
       <ul class="dropdown-menu" aria-labelledby="menuButton">
-        <li><a class="dropdown-item" routerLink="/my-profile">View My Profile</a></li>
+        <li><a class="dropdown-item" [routerLink]="['/profile', userId]">View My Profile</a></li>
         <li><a class="dropdown-item" routerLink="/update-profile">Update My Profile</a></li>
         <li><a class="dropdown-item" routerLink="/preferences">Account Settings</a></li>
         <li><a class="dropdown-item" href="#" (click)="logout()">Logout</a></li>
@@ -20,9 +20,10 @@
      <!-- Right side: Profile icon and greeting -->
     <div class="d-flex align-items-center">
       <span *ngIf="username" class="me-2">Hi, {{ username }}</span>
-      <a class="profile-link" routerLink="/my-profile">
-        <div class="profile-icon"></div>
-      </a>
+    <a class="profile-link" [routerLink]="['/profile', userId]">
+      <div class="profile-icon"></div>
+    </a>
+
     </div>
   </header>
   

@@ -50,11 +50,34 @@
         </select>
     </div>
 
+    <div class="search-category">
+        <label for="username">Username:</label>
+        <input type="text" id="username" [(ngModel)]="usernameQuery" placeholder="Search by username" />
+        <button (click)="searchByUsername()">Search</button>
+    </div>
+
+
     <!-- Search Button -->
     <div class="search-category">
         <button class="search-button" (click)="performSearch()">Search</button>
     </div>
-
-
-
 </div>
+
+
+<div class="results-container" *ngIf="users.length > 0; else noResults">
+  <div class="user-card" *ngFor="let user of users">
+    <img
+      [src]="user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture"
+      alt="Profile Picture"
+      class="user-thumbnail"
+    />
+    <p class="username">{{ user.username }}</p>
+    <button (click)="viewProfile(user.id)">View Profile</button>
+  </div>
+</div>
+
+<ng-template #noResults>
+  <p>No users found.</p>
+</ng-template>
+
+

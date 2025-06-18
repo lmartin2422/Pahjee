@@ -73,6 +73,26 @@ export class SearchComponent implements OnInit {
     }
   }
 
+  usernameQuery: string = '';
+
+  searchByUsername(): void {
+    if (!this.usernameQuery.trim()) return;
+    this.userService.searchByUsername(this.usernameQuery.trim()).subscribe({
+      next: (res: any) => {
+        this.users = res ? [res] : [];
+      },
+      error: err => console.error('Username search failed:', err)
+    });
+  }
+
+
+  backendUrl = 'http://127.0.0.1:8000'; // Add this if not already present
+
+  viewProfile(userId: string): void {
+    this.router.navigate(['/view-profile', userId]);
+  }
+
+
 
 
 

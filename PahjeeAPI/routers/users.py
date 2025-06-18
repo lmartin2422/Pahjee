@@ -3,11 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from services import user_service
-from schemas import UserCreate, UserUpdate, UserResponse, UserSearch, FavoriteResponse
+from schemas import UserCreate, UserUpdate, UserResponse, UserSearch, FavoriteResponse, SearchFilters
 from typing import List
 import models, schemas
 from datetime import date, timedelta
 from sqlalchemy import and_
+
+
 
 
 router = APIRouter(
@@ -70,3 +72,21 @@ def favorite_user(data: dict, db: Session = Depends(get_db)):
 @router.get("/favorites/{user_id}", response_model=List[FavoriteResponse])
 def get_favorites(user_id: int, db: Session = Depends(get_db)):
     return user_service.get_favorites(db, user_id)
+
+
+@router.post("/users/search")
+def search_users(filters: SearchFilters):
+    # your filtering logic here
+    ...
+
+@router.get("/users/by-username/{username}")
+def get_user_by_username(username: str):
+    return db.query(User).filter(User.username == username).first()
+
+
+@router.get("/users/by-username/{username}")
+def get_user_by_username_route(username: str, db: Session = Depends(get_db)):
+    user = user_service.get_user_by_username(db, username)
+    if user:
+        return user
+    raise HTTPException(status_code=404, detail="User not found")

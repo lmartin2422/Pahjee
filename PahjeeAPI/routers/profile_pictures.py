@@ -33,6 +33,13 @@ def upload_profile_picture(user_id: int, file: UploadFile = File(...), db: Sessi
 
     return db.query(ProfilePicture).filter(ProfilePicture.user_id == user_id).first()
 
+@router.get("/profile-picture/{user_id}", response_model=ProfilePictureSchema)
+def get_profile_picture(user_id: int, db: Session = Depends(get_db)):
+    profile_pic = db.query(ProfilePicture).filter(ProfilePicture.user_id == user_id).first()
+    if not profile_pic:
+        raise HTTPException(status_code=404, detail="Profile picture not found")
+    return profile_pic
+
 
 @router.delete("/profile-picture/{user_id}")
 def delete_profile_picture(user_id: int, db: Session = Depends(get_db)):

@@ -132,6 +132,16 @@ class FavoriteResponse(BaseModel):
 
 
 
+class FavoriteUser(BaseModel):
+    id: int
+    username: str
+
+    class Config:
+        from_attributes = True  # Pydantic v2
+
+
+
+
 
 
 

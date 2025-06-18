@@ -24,3 +24,33 @@
     border: 1px solid pink;
     border-radius: 5px;
 }
+
+
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.user-card {
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 12px;
+  width: 150px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-thumbnail {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.username {
+  font-weight: bold;
+  margin-top: 8px;
+}

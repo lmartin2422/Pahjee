@@ -74,4 +74,11 @@ export class UserService {
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/users/${id}`);
   }
+
+  searchByUsername(username: string) {
+  return this.http.get<any>(`${this.baseUrl}/users/by-username/${username}`);
 }
+
+}
+
+

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common'; // ✅ Add this
 import { RouterModule } from '@angular/router';
@@ -13,35 +13,33 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnDestroy, OnInit {
   username: string | null = null;
+  userId: string | null = null;
   private usernameSub: Subscription;
 
-   constructor(private userService: UserService, private router: Router) {
+  constructor(private userService: UserService, private router: Router) {
     this.usernameSub = this.userService.username$.subscribe(name => {
       this.username = name;
     });
   }
 
+  ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.userId = localStorage.getItem('user_id'); // ✅ safe to use here
+    }
+  }
+
   logout() {
-    // Clear all relevant localStorage items
-    localStorage.removeItem('token'); // your old token
-    localStorage.removeItem('access_token'); // the real token used in requests
-    localStorage.removeItem('username'); // username
-    localStorage.removeItem('user'); // in case user data was cached
-
-    // Clear any in-memory user state
+    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('user');
     this.userService.clearUsername();
-
-    // Optionally add: clear user data if you're storing more info in the service
-    // this.userService.clearUserData();
-
-    // Redirect to login
     this.router.navigate(['/login']);
-
   }
 
   ngOnDestroy() {
-    this.usernameSub.unsubscribe(); // ✅ cleanup
+    this.usernameSub.unsubscribe();
   }
 }

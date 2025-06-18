@@ -4,60 +4,85 @@ import { UserService } from '../services/user.service';
 import { User } from '../models/user.model';
 import { MessageService } from '../services/message.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // ✅ Required for ngModel
-
-
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-view-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule], // ✅ Add FormsModule here
+  imports: [CommonModule, FormsModule],
   templateUrl: './view-profile.component.html',
   styleUrls: ['./view-profile.component.css']
 })
 export class ViewProfileComponent implements OnInit {
-  userId!: number;
-  userData!: User;
+  userId!: number;              // Logged-in user ID
+  viewedUserId!: number;        // ID of the profile being viewed
+  userData!: User;              // Data of the profile being viewed
   messageContent = '';
 
-
-constructor(
-  private route: ActivatedRoute,
-  private userService: UserService,
-  private messageService: MessageService
-) {}
-
+  constructor(
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private messageService: MessageService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
+    const storedUserId = localStorage.getItem('user_id');
+    if (storedUserId) {
+      this.userId = +storedUserId;
+    } else {
+      console.error('No logged-in user ID found in localStorage.');
+      return;
+    }
+
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
-      if (idParam) {
-        this.userId = +idParam;
+      if (idParam && !isNaN(+idParam)) {
+        this.viewedUserId = +idParam;
         this.fetchUser();
+      } else {
+        console.error('Invalid or missing user ID in route:', idParam);
       }
     });
   }
 
   fetchUser(): void {
-    this.userService.getUserById(this.userId).subscribe(user => {
-      this.userData = user;
+    this.userService.getUserById(this.viewedUserId).subscribe({
+      next: user => {
+        this.userData = user;
+      },
+      error: err => {
+        console.error('Error fetching user data:', err);
+      }
     });
   }
 
-
   sendMessage(): void {
-  const senderId = Number(localStorage.getItem('userId'));
-  const recipientId = this.userId;
+    const senderId = this.userId;
+    const recipientId = this.viewedUserId;
 
-  this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
-    next: () => {
-      alert('Message sent!');
-      this.messageContent = '';
-    },
-    error: (err) => {
-      alert('Failed to send message: ' + err.message);
-    }
-  });
+    this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
+      next: () => {
+        alert('Message sent!');
+        this.messageContent = '';
+      },
+      error: err => {
+        alert('Failed to send message: ' + err.message);
+      }
+    });
+  }
 
+  addFavorite(): void {
+    if (!this.userId || !this.viewedUserId) return;
+
+    this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {})
+      .subscribe({
+        next: () => alert('Added to favorites!'),
+        error: (err: any) => {
+          console.error('Error adding favorite:', err);
+          alert('Already in favorites or failed to add.');
+        }
+      });
   }
 }
