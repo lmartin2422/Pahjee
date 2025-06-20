@@ -22,7 +22,7 @@
 
     <div class="search-category">
         <label for="orientation">Sexual Orientation:</label>
-        <select id="orientation" [(ngModel)]="filters.lookingfor">
+        <select id="orientation" [(ngModel)]="filters.sexualorientation">
             <option value="" disabled selected>Choose...</option>
             <option value="straight">Straight</option>
             <option value="gay">Gay</option>
@@ -32,8 +32,23 @@
     </div>
 
     <div class="search-category">
+        <label for="lookingfor">Looking For:</label>
+        <select id="lookingfor" [(ngModel)]="filters.lookingfor">
+            <option value="" disabled selected>Choose...</option>
+            <option value="friends">Friends</option>
+            <option value="dating">Dating</option>
+            <option value="relationship">Relationship</option>
+            <option value="networking">Networking</option>
+            <option value="other">Other</option>
+
+
+        </select>
+    </div>
+
+
+    <div class="search-category">
         <label for="profession">Profession:</label>
-        <select id="profession">
+        <select id="profession" [(ngModel)]="filters.professionindustry">
             <option value="" disabled selected>Choose...</option>
             <option value="student">Student</option>
             <option value="engineer">Engineer</option>
@@ -41,6 +56,7 @@
             <option value="other">Other</option>
         </select>
     </div>
+
 
     <div class="search-category">
         <label for="proximity">State:</label>
@@ -61,6 +77,12 @@
     <div class="search-category">
         <button class="search-button" (click)="performSearch()">Search</button>
     </div>
+
+    <!-- Reset Button -->
+    <div class="search-category">
+        <button class="reset-button" (click)="resetFilters()">Clear</button>
+    </div>
+
 </div>
 
 

@@ -47,7 +47,7 @@ export class UserService {
     return this.http.get<User[]>(`${this.baseUrl}/users/`);
   }
 
-   updateProfile(userId: number, data: any) {
+  updateProfile(userId: number, data: any) {
     return this.http.put(`${this.baseUrl}/users/${userId}`, data);
   }
 
@@ -76,8 +76,13 @@ export class UserService {
   }
 
   searchByUsername(username: string) {
-  return this.http.get<any>(`${this.baseUrl}/users/by-username/${username}`);
-}
+    return this.http.get<any>(`${this.baseUrl}/users/by-username/${username}`);
+  }
+
+  getUserByUsername(username: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/by-username/${username}`);
+  }
+
 
 }
 

@@ -20,7 +20,9 @@ export class SearchComponent implements OnInit {
   gender: '',
   ageRange: '',
   lookingfor: '',
-  location: ''
+  location: '',
+  sexualorientation: '',
+  professionindustry: ''
 };
 
   constructor(private router: Router, private userService: UserService) {}
@@ -43,14 +45,17 @@ export class SearchComponent implements OnInit {
     });
   }
 
-   performSearch(): void {
-    const [min_age, max_age] = this.parseAgeRange(this.filters.ageRange);
-    const payload = {
-      gender: this.filters.gender,
-      lookingfor: this.filters.lookingfor,
-      location: this.filters.location,
-      min_age,
-      max_age
+  performSearch(): void {
+    const [minAge, maxAge] = this.parseAgeRange(this.filters.ageRange);
+
+    const payload: any = {
+      gender: this.filters.gender || null,
+      lookingfor: this.filters.lookingfor || null,
+      location: this.filters.location || null,
+      sexualorientation: this.filters.sexualorientation,
+      professionindustry: this.filters.professionindustry,
+      min_age: minAge ?? null,
+      max_age: maxAge ?? null
     };
 
     this.userService.searchUsers(payload).subscribe({
@@ -62,6 +67,7 @@ export class SearchComponent implements OnInit {
       }
     });
   }
+
 
   parseAgeRange(range: string): [number?, number?] {
     switch (range) {
@@ -91,6 +97,21 @@ export class SearchComponent implements OnInit {
   viewProfile(userId: string): void {
     this.router.navigate(['/view-profile', userId]);
   }
+
+
+  resetFilters(): void {
+  this.filters = {
+    gender: '',
+    ageRange: '',
+    lookingfor: '',
+    location: '',
+    sexualorientation: '',
+    professionindustry: ''
+  };
+  this.usernameQuery = '';
+  this.users = [];
+}
+
 
 
 

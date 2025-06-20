@@ -96,12 +96,7 @@ def search_users(filters: SearchFilters):
     # your filtering logic here
     ...
 
-@router.get("/users/by-username/{username}")
-def get_user_by_username(username: str):
-    return db.query(User).filter(User.username == username).first()
-
-
-@router.get("/users/by-username/{username}")
+@router.get("/by-username/{username}")
 def get_user_by_username_route(username: str, db: Session = Depends(get_db)):
     user = user_service.get_user_by_username(db, username)
     if user:
