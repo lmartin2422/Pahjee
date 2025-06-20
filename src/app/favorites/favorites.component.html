@@ -1,10 +1,20 @@
 <div class="favorites-container">
   <h3>Your Favorite Users</h3>
-  <ul>
-    <li *ngFor="let user of favorites">
-      {{ user.username }}
-      <!-- <button [routerLink]="['/view-profile', user.id]">View Profile</button> -->
+
+  <div class="results-container" *ngIf="favorites.length > 0; else noFavorites">
+    <div class="user-card" *ngFor="let user of favorites">
+      <img
+        [src]="user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture"
+        alt="Profile Picture"
+        class="user-thumbnail"
+      />
+      <p class="username">{{ user.username }}</p>
+      <button (click)="viewProfile(user.id)">View Profile</button>
       <button (click)="removeFavorite(user.id)">Remove</button>
-    </li>
-  </ul>
+    </div>
+  </div>
+
+  <ng-template #noFavorites>
+    <p>You have no favorite users yet.</p>
+  </ng-template>
 </div>

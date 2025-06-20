@@ -9,7 +9,7 @@ import shutil
 import os
 from typing import List
 
-from routers import auth, pictures, messages, favorites, users, profile_pictures
+from routers import auth, pictures, messages, favorites, users, profile_pictures, search
 
 # from models import ProfilePicture  # Make sure this import is included
 
@@ -37,6 +37,7 @@ app.include_router(messages.router)
 app.include_router(favorites.router)
 app.include_router(users.router)
 app.include_router(profile_pictures.router)
+app.include_router(search.router)
 
 
 

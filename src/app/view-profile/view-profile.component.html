@@ -9,8 +9,9 @@
   <p>Profession: {{ userData.professionindustry }}</p>
   <p>{{ userData.bio }}</p>
 
-  <!-- Add to Favorites Button -->
-  <button (click)="addFavorite()">Add to Favorites</button>
+  <!-- Favorites Toggle Button -->
+  <button *ngIf="!isFavorite" (click)="addFavorite()">❤️ Add to Favorites</button>
+  <button *ngIf="isFavorite" (click)="removeFavorite()">💔 Remove from Favorites</button>
 
   <!-- Message Form -->
   <div style="margin-top: 20px;">
@@ -18,7 +19,7 @@
     <form (ngSubmit)="sendMessage()">
       <textarea [(ngModel)]="messageContent" name="messageContent" required></textarea>
       <br>
-      <button type="submit">Send</button>
+      <button type="submit">📨 Send</button>
     </form>
   </div>
 </div>

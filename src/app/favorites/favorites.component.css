@@ -19,3 +19,37 @@
 }
 
 
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.user-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  width: 160px;
+}
+
+.user-thumbnail {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.username {
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+button {
+  display: block;
+  margin: 4px auto;
+  padding: 6px 12px;
+}
+
+

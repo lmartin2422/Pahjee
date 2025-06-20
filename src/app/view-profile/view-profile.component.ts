@@ -19,6 +19,7 @@ export class ViewProfileComponent implements OnInit {
   viewedUserId!: number;        // ID of the profile being viewed
   userData!: User;              // Data of the profile being viewed
   messageContent = '';
+  isFavorite = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +42,7 @@ export class ViewProfileComponent implements OnInit {
       if (idParam && !isNaN(+idParam)) {
         this.viewedUserId = +idParam;
         this.fetchUser();
+        this.checkIfFavorite();
       } else {
         console.error('Invalid or missing user ID in route:', idParam);
       }
@@ -58,6 +60,49 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
+  checkIfFavorite(): void {
+    this.http.get<any[]>(`http://127.0.0.1:8000/users/${this.userId}/favorites`).subscribe({
+      next: favorites => {
+        this.isFavorite = favorites.some((fav: any) => fav.id === this.viewedUserId);
+      },
+      error: err => {
+        console.error('Error checking favorites:', err);
+      }
+    });
+  }
+
+  addFavorite(): void {
+    if (!this.userId || !this.viewedUserId) return;
+
+    this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {})
+      .subscribe({
+        next: () => {
+          this.isFavorite = true;
+          alert('✅ User added to favorites!');
+        },
+        error: (err: any) => {
+          console.error('Error adding favorite:', err);
+          alert('❌ Could not add to favorites.');
+        }
+      });
+  }
+
+  removeFavorite(): void {
+    if (!this.userId || !this.viewedUserId) return;
+
+    this.http.delete(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`)
+      .subscribe({
+        next: () => {
+          this.isFavorite = false;
+          alert('❌ User removed from favorites.');
+        },
+        error: (err: any) => {
+          console.error('Error removing favorite:', err);
+          alert('❌ Could not remove from favorites.');
+        }
+      });
+  }
+
   sendMessage(): void {
     const senderId = this.userId;
     const recipientId = this.viewedUserId;
@@ -71,18 +116,5 @@ export class ViewProfileComponent implements OnInit {
         alert('Failed to send message: ' + err.message);
       }
     });
-  }
-
-  addFavorite(): void {
-    if (!this.userId || !this.viewedUserId) return;
-
-    this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {})
-      .subscribe({
-        next: () => alert('Added to favorites!'),
-        error: (err: any) => {
-          console.error('Error adding favorite:', err);
-          alert('Already in favorites or failed to add.');
-        }
-      });
   }
 }

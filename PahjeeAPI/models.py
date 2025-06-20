@@ -37,7 +37,7 @@ class User(Base):
     search_preferences = relationship("SearchPreference", back_populates="user", cascade="all, delete")
 
     favorites_sent = relationship("Favorite", foreign_keys="[Favorite.user_id]", back_populates="user")
-    favorites_received = relationship("Favorite", foreign_keys="[Favorite.favorited_user_id]", back_populates="favorited_user")
+    favorites_received = relationship("Favorite", foreign_keys="[Favorite.favorite_user_id]", back_populates="favorite_user")
 
     profile_picture = relationship("ProfilePicture", back_populates="user", uselist=False)
 
@@ -51,12 +51,12 @@ class Favorite(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    favorited_user_id = Column(Integer, ForeignKey("users.id"))
+    favorite_user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(TIMESTAMP, server_default=func.now())
 
     # RELATIONSHIPS
     user = relationship("User", foreign_keys=[user_id], back_populates="favorites_sent")
-    favorited_user = relationship("User", foreign_keys=[favorited_user_id], back_populates="favorites_received")
+    favorite_user = relationship("User", foreign_keys=[favorite_user_id], back_populates="favorites_received")
 
     def __repr__(self):
         return f"<Favorite(id={self.id}, user_id={self.user_id}, favorite_user_id={self.favorite_user_id})>"

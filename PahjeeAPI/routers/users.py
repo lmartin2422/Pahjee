@@ -10,8 +10,6 @@ from datetime import date, timedelta
 from sqlalchemy import and_
 
 
-
-
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
@@ -65,13 +63,32 @@ def search_users(filters: schemas.SearchFilters, db: Session = Depends(get_db)):
     return query.all()
 
 
-@router.post("/favorite", response_model=FavoriteResponse)
-def favorite_user(data: dict, db: Session = Depends(get_db)):
-    return user_service.favorite_user(db, data["user_id"], data["favorite_user_id"])
+@router.post("/{user_id}/favorites/{favorited_user_id}")
+def add_favorite(user_id: int, favorited_user_id: int, db: Session = Depends(get_db)):
+    existing = db.query(models.Favorite).filter_by(user_id=user_id, favorited_user_id=favorited_user_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Already in favorites")
+    
+    new_fav = models.Favorite(user_id=user_id, favorited_user_id=favorited_user_id)
+    db.add(new_fav)
+    db.commit()
+    return {"message": "Favorite added"}
 
-@router.get("/favorites/{user_id}", response_model=List[FavoriteResponse])
-def get_favorites(user_id: int, db: Session = Depends(get_db)):
-    return user_service.get_favorites(db, user_id)
+@router.get("/{user_id}/favorites", response_model=List[UserResponse])
+def get_user_favorites(user_id: int, db: Session = Depends(get_db)):
+    favs = db.query(models.Favorite).filter_by(user_id=user_id).all()
+    user_ids = [fav.favorited_user_id for fav in favs]
+    return db.query(models.User).filter(models.User.id.in_(user_ids)).all()
+
+@router.delete("/{user_id}/favorites/{favorited_user_id}")
+def remove_favorite(user_id: int, favorited_user_id: int, db: Session = Depends(get_db)):
+    fav = db.query(models.Favorite).filter_by(user_id=user_id, favorited_user_id=favorited_user_id).first()
+    if not fav:
+        raise HTTPException(status_code=404, detail="Favorite not found")
+    
+    db.delete(fav)
+    db.commit()
+    return {"message": "Favorite removed"}
 
 
 @router.post("/users/search")
