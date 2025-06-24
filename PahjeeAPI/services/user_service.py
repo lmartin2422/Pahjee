@@ -6,12 +6,17 @@ from schemas import UserCreate, UserUpdate
 from passlib.context import CryptContext
 from typing import List
 import models
+from sqlalchemy import or_
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+# def get_user_by_username(db: Session, username: str):
+#     return db.query(models.User).filter(models.User.username == username).first()
+
 def get_user_by_username(db: Session, username: str):
-    return db.query(models.User).filter(models.User.username == username).first()
+    return db.query(models.User).filter(models.User.username.ilike(f"%{username}%")).all()
 
 
 def get_user_by_id(db: Session, user_id: int):

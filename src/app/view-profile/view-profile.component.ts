@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user.model';
 import { MessageService } from '../services/message.service';
@@ -19,14 +19,17 @@ export class ViewProfileComponent implements OnInit {
   viewedUserId!: number;        // ID of the profile being viewed
   userData!: User;              // Data of the profile being viewed
   messageContent = '';
-  isFavorite = false;
+  isFavorite = false
+  
 
   constructor(
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private messageService: MessageService,
-    private http: HttpClient
-  ) {}
+  private route: ActivatedRoute,
+  private router: Router, // ✅ ADD THIS
+  private userService: UserService,
+  private messageService: MessageService,
+  private http: HttpClient
+) {}
+
 
   ngOnInit(): void {
     const storedUserId = localStorage.getItem('user_id');
@@ -109,12 +112,15 @@ export class ViewProfileComponent implements OnInit {
 
     this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
       next: () => {
-        alert('Message sent!');
         this.messageContent = '';
+        // ✅ Redirect to messages page
+        window.alert('Message sent!');
+        this.router.navigate(['/messages']);
       },
       error: err => {
-        alert('Failed to send message: ' + err.message);
+        window.alert('Failed to send message: ' + err.message);
       }
     });
   }
+
 }

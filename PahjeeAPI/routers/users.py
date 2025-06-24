@@ -96,9 +96,22 @@ def search_users(filters: SearchFilters):
     # your filtering logic here
     ...
 
-@router.get("/by-username/{username}")
-def get_user_by_username_route(username: str, db: Session = Depends(get_db)):
-    user = user_service.get_user_by_username(db, username)
-    if user:
-        return user
-    raise HTTPException(status_code=404, detail="User not found")
+
+
+
+# @router.get("/by-username/{username}", response_model=List[schemas.UserResponse])
+# def get_user_by_username_route(username: str, db: Session = Depends(get_db)):
+#     users = user_service.get_user_by_username(db, username)
+#     if users:
+#         return users
+#     raise HTTPException(status_code=404, detail="No users found")
+
+
+@router.get("/by-username/{username}", response_model=List[schemas.UserResponse])
+def get_user_by_username_route(username: str, db: Session = Depends(get_db), current_user_id: int = None):
+    users = user_service.get_user_by_username(db, username)
+    if users:
+        if current_user_id:
+            users = [user for user in users if user.id != current_user_id]
+        return users
+    raise HTTPException(status_code=404, detail="No users found")

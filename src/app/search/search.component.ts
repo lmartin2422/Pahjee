@@ -81,15 +81,21 @@ export class SearchComponent implements OnInit {
 
   usernameQuery: string = '';
 
+
+
   searchByUsername(): void {
     if (!this.usernameQuery.trim()) return;
+
+    const currentUserId = localStorage.getItem('user_id');
+
     this.userService.searchByUsername(this.usernameQuery.trim()).subscribe({
-      next: (res: any) => {
-        this.users = res ? [res] : [];
+      next: (res: any[]) => {
+        this.users = res.filter(user => user.id.toString() !== currentUserId);  // filter out current user
       },
       error: err => console.error('Username search failed:', err)
     });
   }
+
 
 
   backendUrl = 'http://127.0.0.1:8000'; // Add this if not already present
@@ -100,16 +106,25 @@ export class SearchComponent implements OnInit {
 
 
   resetFilters(): void {
-  this.filters = {
-    gender: '',
-    ageRange: '',
-    lookingfor: '',
-    location: '',
-    sexualorientation: '',
-    professionindustry: ''
-  };
-  this.usernameQuery = '';
-  this.users = [];
+    this.filters = {
+      gender: '',
+      ageRange: '',
+      lookingfor: '',
+      location: '',
+      sexualorientation: '',
+      professionindustry: ''
+    };
+
+    this.usernameQuery = '';
+
+    const currentUserId = localStorage.getItem('user_id');
+
+    this.userService.getAllUsers().subscribe({
+      next: (data: any[]) => {
+        this.users = data.filter(user => user.id.toString() !== currentUserId);
+      },
+      error: (err) => console.error('Failed to reload users on reset:', err)
+    });
 }
 
 

@@ -1,0 +1,24 @@
+<div class="threads-container">
+  <h2>Messages</h2>
+  <div
+    *ngFor="let thread of threads"
+    (click)="openConversation(thread.sender_id === userId ? thread.recipient_id : thread.sender_id)"
+    class="thread-card"
+  >
+    <img
+      src="assets/default-avatar.png"
+      alt="Profile"
+      class="profile-pic"
+    />
+
+    <div class="thread-content">
+      <div class="thread-header">
+        <strong>
+          {{ thread.sender_id === userId ? 'You ➡️ User ' + thread.recipient_id : 'User ' + thread.sender_id + ' ➡️ You' }}
+        </strong>
+        <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
+      </div>
+      <p class="preview">{{ thread.content }}</p>
+    </div>
+  </div>
+</div>

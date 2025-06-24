@@ -54,7 +54,7 @@ export class DirectMessagesComponent implements OnInit {
   }
 
   sendMessage(): void {
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem('user_id');  // ✅ match key from localStorage
     if (!userId || !this.messageForm.value.message) return;
 
     this.http.post(`http://127.0.0.1:8000/messages`, {

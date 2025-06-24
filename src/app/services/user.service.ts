@@ -75,9 +75,17 @@ export class UserService {
     return this.http.get<User>(`${this.baseUrl}/users/${id}`);
   }
 
+  // searchByUsername(username: string) {
+  //   return this.http.get<any>(`${this.baseUrl}/users/by-username/${username}`);
+  // }
+
   searchByUsername(username: string) {
-    return this.http.get<any>(`${this.baseUrl}/users/by-username/${username}`);
-  }
+  return this.http.get<any[]>(`${this.baseUrl}/users/by-username/${username}`);
+}
+
+
+
+
 
   getUserByUsername(username: string): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/users/by-username/${username}`);

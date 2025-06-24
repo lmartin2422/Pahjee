@@ -1,4 +1,4 @@
-from sqlalchemy import ( Column, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey)
+from sqlalchemy import ( Column, DateTime, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey)
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
 
@@ -79,12 +79,17 @@ class Picture(Base):
 class Message(Base):
     __tablename__ = "messages"
 
-    id = Column(Integer, primary_key=True, index=True)
-    sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    recipient_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    content = Column(Text, nullable=False)
-    timestamp = Column(TIMESTAMP, server_default=func.now())
 
+
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id"))
+    recipient_id = Column(Integer, ForeignKey("users.id"))
+    content = Column(String)
+    sent_at = Column(DateTime, default=datetime.utcnow)
+    is_read = Column(Boolean, default=False)
+    deleted_by_sender = Column(Boolean, default=False)
+    deleted_by_recipient = Column(Boolean, default=False)
+    
     sender = relationship("User", back_populates="sent_messages", foreign_keys=[sender_id])
     recipient = relationship("User", back_populates="received_messages", foreign_keys=[recipient_id])
 

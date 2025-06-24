@@ -112,7 +112,7 @@ class MessageResponse(BaseModel):
     sender_id: int
     recipient_id: int
     content: str
-    timestamp: datetime
+    sent_at: datetime
 
     class Config:
         from_attributes = True
