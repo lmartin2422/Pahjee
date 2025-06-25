@@ -1,14 +1,15 @@
-<div class="message-container">
-  <div *ngFor="let message of messages" class="message">
-    <div class="message-header">
-      <span class="sender-name">{{ message.sender_id === recipientId ? 'You' : 'Them' }}</span>
-      <span class="message-time">{{ message.sent_at | date:'short' }}</span>
+<div class="conversation-page">
+  <h2>Chat with User {{ partnerId }}</h2>
+
+  <div class="message-thread">
+    <div *ngFor="let msg of messages" class="message-bubble"
+         [ngClass]="{ 'sent': msg.sender_id === userId, 'received': msg.sender_id !== userId }">
+      {{ msg.content }}
     </div>
-    <p class="message-text">{{ message.content }}</p>
   </div>
 
-  <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="send-message">
-    <input formControlName="message" placeholder="Type a message" />
-    <button type="submit">Send</button>
-  </form>
+  <div class="send-box">
+    <input [(ngModel)]="newMessage" placeholder="Type a message..." />
+    <button (click)="sendMessage()">Send</button>
+  </div>
 </div>

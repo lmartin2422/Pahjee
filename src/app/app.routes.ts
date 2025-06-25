@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'direct-messages/:partnerId', component: DirectMessagesComponent },
 
   // ✅ Updated messages routes:
   { path: 'messages', component: MessagesListComponent, canActivate: [AuthGuard] }, // list of threads

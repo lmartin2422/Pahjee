@@ -57,3 +57,40 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+.conversation-box {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.message-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: 20px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.sent {
+  background-color: #0084ff;
+  color: white;
+  align-self: flex-end;
+}
+
+.received {
+  background-color: #e4e6eb;
+  color: black;
+  align-self: flex-start;
+}

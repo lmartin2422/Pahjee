@@ -4,66 +4,50 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.css']
 })
 export class DirectMessagesComponent implements OnInit {
+  userId: number = 0;
+  partnerId: number = 0;
   messages: any[] = [];
-  messageForm: FormGroup;
-  recipientId: number = 0;
+  newMessage: string = '';
 
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
-    this.messageForm = this.fb.group({
-      message: ['']
-    });
-  }
+  constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
-    const token = localStorage.getItem('access_token');
-    const userId = localStorage.getItem('user_id');
+    this.userId = +(localStorage.getItem('user_id') || 0);
+    this.partnerId = +this.route.snapshot.paramMap.get('partnerId')!;
 
-    if (!token || !userId) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-
-
-    this.route.params.subscribe(params => {
-      this.recipientId = +params['id']; // Read /messages/:id
-      this.fetchMessages();
-    });
+    this.loadMessages();
   }
 
-  fetchMessages(): void {
-    const userId = localStorage.getItem('userId');
-    if (userId && this.recipientId) {
-      this.http.get<any[]>(`http://127.0.0.1:8000/messages/${userId}/${this.recipientId}`)
-        .subscribe(data => this.messages = data);
-    }
+  loadMessages(): void {
+    this.http.get<any[]>(`http://127.0.0.1:8000/messages/${this.userId}/${this.partnerId}`)
+      .subscribe(data => this.messages = data);
   }
 
   sendMessage(): void {
-    const userId = localStorage.getItem('user_id');  // ✅ match key from localStorage
-    if (!userId || !this.messageForm.value.message) return;
+    if (!this.newMessage.trim()) return;
 
-    this.http.post(`http://127.0.0.1:8000/messages`, {
-      sender_id: Number(userId),
-      recipient_id: this.recipientId,
-      content: this.messageForm.value.message
-    }).subscribe(() => {
-      this.messageForm.reset();
-      this.fetchMessages();
-    });
+    const body = {
+      sender_id: this.userId,
+      recipient_id: this.partnerId,
+      content: this.newMessage
+    };
+
+    this.http.post(`http://127.0.0.1:8000/messages/send`, body)
+      .subscribe(() => {
+        this.newMessage = '';
+        this.loadMessages(); // reload messages after send
+      });
   }
 }
+

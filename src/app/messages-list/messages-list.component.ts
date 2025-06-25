@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 export class MessagesListComponent implements OnInit {
   threads: any[] = [];
   userId: number = 0;
+  selectedPartnerId: number | null = null;
+messages: any[] = [];
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -39,7 +41,8 @@ export class MessagesListComponent implements OnInit {
     }
   }
 
-  openConversation(partnerId: number): void {
-    this.router.navigate(['/messages', partnerId]);
-  }
+openConversation(partnerId: number): void {
+  this.router.navigate(['/direct-messages', partnerId]);
+}
+
 }

@@ -23,24 +23,14 @@ def get_messages(user_id: int, db: Session = Depends(get_db)):
     return message_service.get_user_messages(db, user_id)
 
 
-# @router.get("/threads/{user_id}")
-# def get_message_threads(user_id: int, db: Session = Depends(get_db)):
-#     # Get all messages for this user (sent or received)
-#     messages = db.query(Message).filter(
-#         (Message.sender_id == user_id) | (Message.recipient_id == user_id)
-#     ).order_by(Message.sent_at.desc()).all()
-
-#     # Track unique conversation partners
-#     unique_user_ids = set()
-#     threads = []
-
-#     for msg in messages:
-#         partner_id = msg.recipient_id if msg.sender_id == user_id else msg.sender_id
-#         if partner_id not in unique_user_ids:
-#             unique_user_ids.add(partner_id)
-#             threads.append(msg)
-
-#     return threads
+@router.get("/{sender_id}/{recipient_id}")
+def get_conversation(sender_id: int, recipient_id: int, db: Session = Depends(get_db)):
+    messages = db.query(Message).filter(
+        ((Message.sender_id == sender_id) & (Message.recipient_id == recipient_id)) |
+        ((Message.sender_id == recipient_id) & (Message.recipient_id == sender_id))
+    ).order_by(Message.sent_at).all()
+    
+    return messages
 
 
 
