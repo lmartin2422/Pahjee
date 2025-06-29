@@ -10,9 +10,9 @@
 
     <div class="thread-content">
       <div class="thread-header">
-        <strong>
-          {{ thread.sender_id === userId ? 'You ➡️ User ' + thread.recipient_id : 'User ' + thread.sender_id + ' ➡️ You' }}
-        </strong>
+    <strong>
+      {{ thread.sender_id === userId ? 'You ➡️ ' + partnerNames[thread.recipient_id] : partnerNames[thread.sender_id] + ' ➡️ You' }}
+    </strong>
         <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
       </div>
       <p class="preview">{{ thread.content }}</p>

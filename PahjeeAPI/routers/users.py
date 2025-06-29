@@ -30,6 +30,20 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
+@router.get("/public/{user_id}")
+def get_public_user_info(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "firstname": user.firstname,
+        "username": user.username
+    }
+
+
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
     updated = user_service.update_user(db, user_id, data)
@@ -95,16 +109,6 @@ def remove_favorite(user_id: int, favorited_user_id: int, db: Session = Depends(
 def search_users(filters: SearchFilters):
     # your filtering logic here
     ...
-
-
-
-
-# @router.get("/by-username/{username}", response_model=List[schemas.UserResponse])
-# def get_user_by_username_route(username: str, db: Session = Depends(get_db)):
-#     users = user_service.get_user_by_username(db, username)
-#     if users:
-#         return users
-#     raise HTTPException(status_code=404, detail="No users found")
 
 
 @router.get("/by-username/{username}", response_model=List[schemas.UserResponse])
