@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr # type: ignore 
-from typing import Optional
-from datetime import date
-from datetime import datetime
+from typing import Optional, List  # ✅ Add List here
+from datetime import date, datetime
+
 
 class UserCreate(BaseModel):
     username: str
@@ -59,11 +59,13 @@ class UserSearch(BaseModel):
 
 
 class SearchFilters(BaseModel):
-    gender: Optional[str]
-    lookingfor: Optional[str]
-    location: Optional[str]
-    min_age: Optional[int]
-    max_age: Optional[int]
+    gender: Optional[List[str]] = []
+    lookingfor: Optional[List[str]] = []
+    location: Optional[List[str]] = []
+    sexualorientation: Optional[List[str]] = []
+    professionindustry: Optional[List[str]] = []
+    min_age: Optional[int] = None
+    max_age: Optional[int] = None
 
 
 class LoginRequest(BaseModel):

@@ -10,7 +10,12 @@
     class="thread-card"
   >
     <ng-container *ngIf="partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id] as data">
-      <img [src]="data.profilePic" alt="Profile" class="profile-pic" />
+      <img
+        [src]="data.profilePic"
+        (error)="data.profilePic = 'assets/default-avatar.png'"
+        alt="Profile"
+        class="profile-pic"
+      />
 
       <div class="thread-content">
         <div class="thread-header">

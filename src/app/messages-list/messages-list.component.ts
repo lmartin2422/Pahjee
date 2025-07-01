@@ -52,26 +52,41 @@ export class MessagesListComponent implements OnInit {
 
 
 
-loadPartnerName(userId: number): void {
-  if (this.partnerData[userId]) return;
+    loadPartnerName(userId: number): void {
+      if (this.partnerData[userId]) return;
 
-  this.http.get<any>(`http://127.0.0.1:8000/users/public/${userId}`).subscribe({
-    next: data => {
-      this.partnerData[userId] = {
-        name: data.first_name || data.username,
-        profilePic: data.profile_picture?.startsWith('http')
-          ? data.profile_picture
-          : `http://127.0.0.1:8000${data.profile_picture}`
-      };
-    },
-    error: () => {
-      this.partnerData[userId] = {
-        name: 'User ' + userId,
-        profilePic: ''  // no fallback image
-      };
+      this.http.get<any>(`http://127.0.0.1:8000/users/public/${userId}`).subscribe({
+        next: user => {
+          // Load profile picture separately
+          this.http.get<any>(`http://127.0.0.1:8000/profile-picture/${userId}`).subscribe({
+            next: pic => {
+              const profilePicUrl = pic.image_url.startsWith('http')
+                ? pic.image_url
+                : `http://127.0.0.1:8000${pic.image_url}`;
+
+              this.partnerData[userId] = {
+                name: user.first_name || user.username,
+                profilePic: profilePicUrl
+              };
+            },
+            error: () => {
+              // fallback if profile picture not found
+              this.partnerData[userId] = {
+                name: user.first_name || user.username,
+                profilePic: 'assets/default-avatar.png'
+              };
+            }
+          });
+        },
+        error: () => {
+          this.partnerData[userId] = {
+            name: 'User ' + userId,
+            profilePic: 'assets/default.jpg'
+          };
+        }
+      });
     }
-  });
-}
+
 
   
 

@@ -54,3 +54,38 @@
   font-weight: bold;
   margin-top: 8px;
 }
+
+
+.filter-toggle-btn {
+  margin: 10px 0;
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.filter-panel {
+  background: #f9f9f9;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 12px;
+}
+
+.filter-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}

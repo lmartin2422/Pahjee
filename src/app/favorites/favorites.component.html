@@ -4,7 +4,8 @@
   <div class="results-container" *ngIf="favorites.length > 0; else noFavorites">
     <div class="user-card" *ngFor="let user of favorites">
       <img
-        [src]="user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture"
+        [src]="user.profile_picture"
+        (error)="user.profile_picture = 'assets/default.jpg'"
         alt="Profile Picture"
         class="user-thumbnail"
       />

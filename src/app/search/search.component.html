@@ -1,95 +1,95 @@
-<div class="search-container">
-    <div class="search-category">
-        <label for="gender">Gender:</label>
-        <select id="gender" [(ngModel)]="filters.gender">
-            <option value="" disabled selected>Choose...</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-        </select>
+<!-- 🔘 FILTER BUTTON -->
+<button (click)="showFilters = !showFilters" class="filter-toggle-btn">
+  {{ showFilters ? 'Close Filters' : 'Filter' }}
+</button>
+
+<!-- 🔽 FILTER PANEL -->
+<div class="filter-panel" *ngIf="showFilters">
+  <form (ngSubmit)="performSearch()" class="filter-form">
+    <!-- GENDER -->
+    <div class="filter-group">
+      <label>Gender:</label>
+      <div *ngFor="let gender of genderOptions">
+        <input type="checkbox" [value]="gender" (change)="onCheckboxChange('gender', $event)" [checked]="filters.gender.includes(gender)" />
+        {{ gender }}
+      </div>
     </div>
 
-    <div class="search-category">
-        <label for="age">Age Range:</label>
-        <select id="age" [(ngModel)]="filters.ageRange">
-            <option value="" disabled selected>Choose...</option>
-            <option value="18-24">18-24</option>
-            <option value="25-29">25-29</option>
-            <option value="30-39">30-39</option>
-            <option value="40+">40+</option>
-        </select>
+    <!-- AGE RANGE -->
+    <div class="filter-group">
+      <label>Age Range:</label>
+        <div class="filter-group">
+           <div *ngFor="let age of ageOptions">
+            <input
+            type="checkbox"
+            [value]="age"
+            (change)="onCheckboxChange('ageRanges', $event)"
+            [checked]="filters.ageRanges.includes(age)"
+            />
+            {{ age }}
+        </div>
     </div>
 
-    <div class="search-category">
-        <label for="orientation">Sexual Orientation:</label>
-        <select id="orientation" [(ngModel)]="filters.sexualorientation">
-            <option value="" disabled selected>Choose...</option>
-            <option value="straight">Straight</option>
-            <option value="gay">Gay</option>
-            <option value="bisexual">Bisexual</option>
-            <option value="other">Other</option>
-        </select>
     </div>
 
-    <div class="search-category">
-        <label for="lookingfor">Looking For:</label>
-        <select id="lookingfor" [(ngModel)]="filters.lookingfor">
-            <option value="" disabled selected>Choose...</option>
-            <option value="friends">Friends</option>
-            <option value="dating">Dating</option>
-            <option value="relationship">Relationship</option>
-            <option value="networking">Networking</option>
-            <option value="other">Other</option>
-
-
-        </select>
+    <!-- SEXUAL ORIENTATION -->
+    <div class="filter-group">
+      <label>Sexual Orientation:</label>
+      <div *ngFor="let o of orientationOptions">
+        <input type="checkbox" [value]="o" (change)="onCheckboxChange('sexualorientation', $event)" [checked]="filters.sexualorientation.includes(o)" />
+        {{ o }}
+      </div>
     </div>
 
-
-    <div class="search-category">
-        <label for="profession">Profession:</label>
-        <select id="profession" [(ngModel)]="filters.professionindustry">
-            <option value="" disabled selected>Choose...</option>
-            <option value="student">Student</option>
-            <option value="engineer">Engineer</option>
-            <option value="artist">Artist</option>
-            <option value="other">Other</option>
-        </select>
+    <!-- LOOKING FOR -->
+    <div class="filter-group">
+      <label>Looking For:</label>
+      <div *ngFor="let l of lookingForOptions">
+        <input type="checkbox" [value]="l" (change)="onCheckboxChange('lookingfor', $event)" [checked]="filters.lookingfor.includes(l)" />
+        {{ l }}
+      </div>
     </div>
 
-
-    <div class="search-category">
-        <label for="proximity">State:</label>
-        <select id="proximity" [(ngModel)]="filters.location">
-            <option value="" disabled selected>Choose...</option>
-            <option value="coming soon">coming soon</option>
-        </select>
+    <!-- PROFESSION -->
+    <div class="filter-group">
+      <label>Profession:</label>
+      <div *ngFor="let p of professionOptions">
+        <input type="checkbox" [value]="p" (change)="onCheckboxChange('professionindustry', $event)" [checked]="filters.professionindustry.includes(p)" />
+        {{ p }}
+      </div>
     </div>
 
-    <div class="search-category">
-        <label for="username">Username:</label>
-        <input type="text" id="username" [(ngModel)]="usernameQuery" placeholder="Search by username" />
-        <button (click)="searchByUsername()">Search</button>
+    <!-- LOCATION -->
+    <div class="filter-group">
+      <label>State:</label>
+      <div *ngFor="let s of locationOptions">
+        <input type="checkbox" [value]="s" (change)="onCheckboxChange('location', $event)" [checked]="filters.location.includes(s)" />
+        {{ s }}
+      </div>
     </div>
 
-
-    <!-- Search Button -->
-    <div class="search-category">
-        <button class="search-button" (click)="performSearch()">Search</button>
+    <!-- SEARCH + CLEAR -->
+    <div class="filter-actions">
+      <button type="submit" class="search-button">Search</button>
+      <button type="button" class="reset-button" (click)="resetFilters()">Clear</button>
     </div>
-
-    <!-- Reset Button -->
-    <div class="search-category">
-        <button class="reset-button" (click)="resetFilters()">Clear</button>
-    </div>
-
+  </form>
 </div>
 
 
+    <!-- <div class="search-category">
+        <label for="username">Username:</label>
+        <input type="text" id="username" [(ngModel)]="usernameQuery" placeholder="Search by username" />
+        <button (click)="searchByUsername()">Search</button>
+    </div> -->
+
+
+<!-- 👤 USER RESULTS -->
 <div class="results-container" *ngIf="users.length > 0; else noResults">
   <div class="user-card" *ngFor="let user of users">
     <img
-      [src]="user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture"
+      [src]="user.profile_picture"
+      (error)="user.profile_picture = 'assets/default.jpg'"
       alt="Profile Picture"
       class="user-thumbnail"
     />
@@ -101,5 +101,3 @@
 <ng-template #noResults>
   <p>No users found.</p>
 </ng-template>
-
-
