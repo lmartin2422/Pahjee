@@ -26,26 +26,24 @@ def get_messages(user_id: int, db: Session = Depends(get_db)):
 @router.get("/threads/{user_id}", response_model=List[MessageResponse])
 def get_message_threads(user_id: int, db: Session = Depends(get_db)):
     print(f"✅ THREADS route hit for user_id = {user_id}")
-    # This will get the most recent message in each conversation (sent or received by this user)
+
     subquery = (
         db.query(
-            Message.sender_id,
-            Message.recipient_id,
+            func.least(Message.sender_id, Message.recipient_id).label("user1"),
+            func.greatest(Message.sender_id, Message.recipient_id).label("user2"),
             func.max(Message.sent_at).label("latest")
-
         )
         .filter((Message.sender_id == user_id) | (Message.recipient_id == user_id))
-        .group_by(Message.sender_id, Message.recipient_id)
+        .group_by("user1", "user2")
         .subquery()
     )
 
-    # Join to get the full message content
     threads = (
         db.query(Message)
         .join(
             subquery,
-            (Message.sender_id == subquery.c.sender_id) &
-            (Message.recipient_id == subquery.c.recipient_id) &
+            (func.least(Message.sender_id, Message.recipient_id) == subquery.c.user1) &
+            (func.greatest(Message.sender_id, Message.recipient_id) == subquery.c.user2) &
             (Message.sent_at == subquery.c.latest)
         )
         .order_by(Message.sent_at.desc())
@@ -53,6 +51,7 @@ def get_message_threads(user_id: int, db: Session = Depends(get_db)):
     )
 
     return threads
+
 
 
 

@@ -100,16 +100,37 @@
     <div class="preview-container">
       <div *ngFor="let img of uploadedImages; let i = index" class="image-slot">
         <img [src]="img.url" class="preview-img" alt="Uploaded Image">
-        <input type="radio" name="profilePic" [value]="img.url" 
+
+        <!-- <input type="radio" name="profilePic" [value]="img.url" 
               (change)="selectProfilePicture(img.url)" 
               [checked]="img.url === selectedProfilePic">
-        <label>Set as Profile Pic</label>
+        <label>Set as Profile Pic</label> -->
+        
         <button type="button" (click)="removeImage(i)">Remove</button>
       </div>
     </div>
 
     <!-- Upload Pics -->
     <p></p>
+
+    <h1>Upload Profile Picture</h1>
+    <div class="form-group mt-2">
+      <label for="profilePicInput">Choose Profile Picture</label>
+      <input
+        id="profilePicInput"
+        class="form-control"
+        type="file"
+        (change)="onProfilePicSelected($event)"
+        accept="image/*"
+      />
+
+    <div *ngIf="profilePicPreview" class="mt-2">
+      <p>Preview:</p>
+      <img [src]="profilePicPreview" class="preview-img" alt="Profile Picture Preview" />
+      <button type="button" class="btn btn-success mt-2" (click)="uploadProfilePicture()">Upload Profile Picture</button>
+    </div>
+  </div>
+
      
     <h1>Upload Pics</h1>
     <div class="form-group mt-2">

@@ -1,23 +1,27 @@
 <div class="threads-container">
   <h2>Messages</h2>
 
+<div class="threads-container">
+ 
+
   <div
     *ngFor="let thread of threads"
     (click)="openConversation(thread.sender_id === userId ? thread.recipient_id : thread.sender_id)"
     class="thread-card"
   >
-    <img src="assets/default-avatar.jpg" alt="Profile" class="profile-pic" />
+    <ng-container *ngIf="partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id] as data">
+      <img [src]="data.profilePic" alt="Profile" class="profile-pic" />
 
-    <div class="thread-content">
-      <div class="thread-header">
-    <strong>
-      {{ thread.sender_id === userId ? 'You ➡️ ' + partnerNames[thread.recipient_id] : partnerNames[thread.sender_id] + ' ➡️ You' }}
-    </strong>
-        <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
+      <div class="thread-content">
+        <div class="thread-header">
+          <strong>{{ data.name }}</strong>
+          <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
+        </div>
+        <p class="preview">{{ thread.content }}</p>
       </div>
-      <p class="preview">{{ thread.content }}</p>
-    </div>
+    </ng-container>
   </div>
+</div>
 
   <!-- 🟦 Expanded conversation area -->
   <div *ngIf="selectedPartnerId !== null" class="conversation-box">

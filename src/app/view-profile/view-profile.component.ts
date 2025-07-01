@@ -56,12 +56,27 @@ export class ViewProfileComponent implements OnInit {
     this.userService.getUserById(this.viewedUserId).subscribe({
       next: user => {
         this.userData = user;
+
+        // Fetch profile picture
+        this.http.get<any>(`http://127.0.0.1:8000/profile-picture/${this.viewedUserId}`).subscribe({
+          next: (pic) => {
+            this.userData.profile_picture = pic.image_url.startsWith('http')
+              ? pic.image_url
+              : `http://127.0.0.1:8000${pic.image_url}`;
+          },
+          error: () => {
+            console.log('No profile picture found');
+          }
+        });
+
       },
       error: err => {
         console.error('Error fetching user data:', err);
       }
     });
   }
+
+
 
   checkIfFavorite(): void {
     this.http.get<any[]>(`http://127.0.0.1:8000/users/${this.userId}/favorites`).subscribe({

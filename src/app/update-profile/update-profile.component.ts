@@ -27,6 +27,10 @@ export class UpdateProfileComponent implements OnInit {
   locationSuggestions: string[] = [];
   locationFocused = false;
 
+  profilePicFile: File | null = null;
+  profilePicPreview: string | null = null;
+
+
 
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) 
     { this.profileForm = this.fb.group({
@@ -38,8 +42,7 @@ export class UpdateProfileComponent implements OnInit {
       birthdate: [''],
       lookingfor: [''],
       sexualorientation: [''],
-      professionindustry: [''],
-       profile_picture: ['']  // ✅ Add this line
+      professionindustry: ['']
     });
   }
 
@@ -92,7 +95,6 @@ showUploadModal = false;
 uploadedImageFiles: File[] = [];  // Just the raw files for upload
 uploadedImages: { file: File; url: string }[] = [];  // For display only
 
-selectedProfilePic: string = '';
 
 
 onFileSelected(event: any) {
@@ -112,6 +114,42 @@ onFileSelected(event: any) {
     alert('Maximum 6 images allowed.');
   }
 }
+
+onProfilePicSelected(event: any): void {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  this.profilePicFile = file;
+
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.profilePicPreview = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+uploadProfilePicture(): void {
+  if (!this.profilePicFile) return;
+
+  const userId = localStorage.getItem('user_id');
+  if (!userId) return;
+
+  const formData = new FormData();
+  formData.append('file', this.profilePicFile);
+
+  this.http.post(`http://127.0.0.1:8000/profile-picture/upload?user_id=${userId}`, formData).subscribe({
+    next: (res: any) => {
+      alert('Profile picture uploaded!');
+      this.profilePicFile = null;
+      this.profilePicPreview = null;
+    },
+    error: err => {
+      console.error(err);
+      alert('Profile picture upload failed');
+    }
+  });
+}
+
 
 
 uploadPictures(): void {
@@ -145,8 +183,7 @@ savePictures() {
 
   const formData = new FormData();
   this.uploadedImages.forEach(img => formData.append('files', img.file));
-  const selectedName = this.selectedProfilePic?.split('/').pop();
-  formData.append('profile_pic_filename', selectedName || '');
+  
   
   this.http.post(`http://127.0.0.1:8000/users/${userId}/upload_pictures`, formData)
     .subscribe({
@@ -168,7 +205,7 @@ openUploadModal(event: Event): void {
 
 cancelUpload() {
   this.uploadedImages = [];
-  this.selectedProfilePic = '';
+  
   this.closeUploadModal();
 }
 
@@ -182,9 +219,6 @@ removeImage(index: number) {
   this.uploadedImages.splice(index, 1);
 }
 
-selectProfilePicture(url: string) {
-  this.selectedProfilePic = url;
-}
 
 
 onLocationInput() {

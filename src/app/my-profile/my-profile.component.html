@@ -1,27 +1,11 @@
 <div class="profile-container" *ngIf="user">
   <h2>{{ user.firstname }} {{ user.lastname }}'s Profile</h2>
 
-<div class="profile-picture-wrapper">
-  <img [src]="previewUrl || (user.profile_picture?.startsWith('http') ? user.profile_picture : backendUrl + user.profile_picture)" alt="Profile Picture" />
-  <label class="upload-button">
-    <input type="file" hidden (change)="handleFileSelection($event)" />
-    +
-  </label>
+  <div class="profile-picture-section" *ngIf="user.profile_picture">
+  <img [src]="user.profile_picture" alt="Profile Picture" class="profile-pic" />
 </div>
 
-<!-- Confirm step -->
-<div *ngIf="selectedFile && previewUrl" class="confirm-box">
-  <p>Confirm this image?</p>
-  <img [src]="previewUrl" class="preview" />
-  <button (click)="confirmUpload()">Confirm</button>
-  <button (click)="cancelUpload()">Cancel</button>
-</div>
 
-<button *ngIf="user.profile_picture" (click)="deleteProfilePicture()">Delete Profile Picture</button>
-
-
-
-  <hr />
 <h3>Your Pictures</h3>
 <div class="picture-grid" *ngIf="pictures.length > 0; else noPics">
   <div class="pic-card" *ngFor="let pic of pictures">

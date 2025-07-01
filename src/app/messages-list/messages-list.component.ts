@@ -16,6 +16,7 @@ export class MessagesListComponent implements OnInit {
   selectedPartnerId: number | null = null;
   messages: any[] = [];
   partnerNames: { [userId: number]: string } = {}
+  partnerData: { [userId: number]: { name: string, profilePic: string } } = {};
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -49,19 +50,31 @@ export class MessagesListComponent implements OnInit {
   }
 }
 
-  
-  loadPartnerName(userId: number): void {
-  if (this.partnerNames[userId]) return;
+
+
+loadPartnerName(userId: number): void {
+  if (this.partnerData[userId]) return;
 
   this.http.get<any>(`http://127.0.0.1:8000/users/public/${userId}`).subscribe({
     next: data => {
-      this.partnerNames[userId] = data.first_name || data.username;
+      this.partnerData[userId] = {
+        name: data.first_name || data.username,
+        profilePic: data.profile_picture?.startsWith('http')
+          ? data.profile_picture
+          : `http://127.0.0.1:8000${data.profile_picture}`
+      };
     },
     error: () => {
-      this.partnerNames[userId] = 'User ' + userId;
+      this.partnerData[userId] = {
+        name: 'User ' + userId,
+        profilePic: ''  // no fallback image
+      };
     }
   });
 }
+
+  
+
 
 
 openConversation(partnerId: number): void {

@@ -108,3 +108,17 @@
 }
 
 
+.profile-picture-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+

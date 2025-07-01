@@ -8,6 +8,8 @@ from typing import List
 import models, schemas
 from datetime import date, timedelta
 from sqlalchemy import and_
+from models import User, ProfilePicture
+from fastapi import HTTPException
 
 
 router = APIRouter(
@@ -119,3 +121,21 @@ def get_user_by_username_route(username: str, db: Session = Depends(get_db), cur
             users = [user for user in users if user.id != current_user_id]
         return users
     raise HTTPException(status_code=404, detail="No users found")
+
+
+
+
+@router.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # 👇 Fetch the profile picture and attach to user
+    profile_pic = db.query(ProfilePicture).filter(ProfilePicture.user_id == user_id).first()
+    user_dict = user.__dict__.copy()
+    user_dict["profile_picture"] = (
+        profile_pic.image_url if profile_pic else None
+    )
+
+    return user_dict

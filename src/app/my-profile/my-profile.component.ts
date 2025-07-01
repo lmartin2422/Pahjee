@@ -49,21 +49,24 @@ export class MyProfileComponent implements OnInit {
       this.http.get(`${this.backendUrl}/users/${userId}`).subscribe((data: any) => {
         this.user = data;
 
-        // 🔁 Fetch profile picture separately and merge it into the user object
-        this.http.get(`${this.backendUrl}/profile-picture/${userId}`).subscribe({
-          next: (picData: any) => {
-            this.user.profile_picture = picData.image_url.startsWith('http')
-              ? picData.image_url
-              : `${this.backendUrl}${picData.image_url}`;
+        // 🔽 Get profile picture
+        this.http.get<any>(`${this.backendUrl}/profile-picture/${userId}`).subscribe({
+          next: (pic) => {
+            this.user.profile_picture = pic.image_url.startsWith('http')
+              ? pic.image_url
+              : `${this.backendUrl}${pic.image_url}`;
           },
-          error: err => {
-            console.warn("No profile picture found:", err.message);
-            this.user.profile_picture = null;
+          error: () => {
+            console.log('No profile picture found');
           }
         });
       });
     }
   }
+
+
+
+
 
   loadPictures(): void {
     const userId = localStorage.getItem('user_id');
@@ -78,80 +81,6 @@ export class MyProfileComponent implements OnInit {
       });
     }
   }
-
-
-  uploadProfilePicture(event: any): void {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append('file', file);
-  const userId = localStorage.getItem('user_id');
-  formData.append('user_id', userId!);
-
-  this.http.post(`${this.backendUrl}/profile-picture/upload?user_id=${userId}`, formData).subscribe({
-    next: (res: any) => {
-      this.user.profile_picture = res.image_url;
-    },
-    error: err => {
-      alert('Upload failed: ' + err.message);
-    }
-  });
-}
-
-handleFileSelection(event: any): void {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  this.selectedFile = file;
-
-  // Generate preview
-  const reader = new FileReader();
-  reader.onload = (e: any) => {
-    this.previewUrl = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-confirmUpload(): void {
-  if (!this.selectedFile) return;
-
-  const formData = new FormData();
-  const userId = localStorage.getItem('user_id');
-  formData.append('file', this.selectedFile);
-  formData.append('user_id', userId!);
-
-  this.http.post(`${this.backendUrl}/profile-picture/upload?user_id=${userId}`, formData).subscribe({
-    next: (res: any) => {
-      this.user.profile_picture = res.image_url;
-      this.previewUrl = null;
-      this.selectedFile = null;
-    },
-    error: err => {
-      alert('Upload failed: ' + err.message);
-    }
-  });
-}
-
-cancelUpload(): void {
-  this.selectedFile = null;
-  this.previewUrl = null;
-}
-
-
-deleteProfilePicture(): void {
-  const userId = localStorage.getItem('user_id');
-  this.http.delete(`${this.backendUrl}/profile-picture/${userId}`).subscribe({
-    next: () => {
-      this.user.profile_picture = null;
-      alert('Profile picture deleted!');
-    },
-    error: err => alert('Delete failed: ' + err.message)
-  });
-}
-
-
-
 
 
   onSubmit(): void {

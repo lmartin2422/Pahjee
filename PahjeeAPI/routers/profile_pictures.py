@@ -5,6 +5,7 @@ import os
 from database import get_db
 from models import ProfilePicture, User
 from schemas import ProfilePicture as ProfilePictureSchema
+from fastapi.responses import FileResponse
 
 router = APIRouter()
 
@@ -33,12 +34,18 @@ def upload_profile_picture(user_id: int, file: UploadFile = File(...), db: Sessi
 
     return db.query(ProfilePicture).filter(ProfilePicture.user_id == user_id).first()
 
-@router.get("/profile-picture/{user_id}", response_model=ProfilePictureSchema)
+
+
+@router.get("/profile-picture/{user_id}")
 def get_profile_picture(user_id: int, db: Session = Depends(get_db)):
     profile_pic = db.query(ProfilePicture).filter(ProfilePicture.user_id == user_id).first()
     if not profile_pic:
         raise HTTPException(status_code=404, detail="Profile picture not found")
-    return profile_pic
+
+    return {"image_url": profile_pic.image_url}
+
+
+
 
 
 @router.delete("/profile-picture/{user_id}")

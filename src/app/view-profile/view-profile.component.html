@@ -1,5 +1,10 @@
 <div *ngIf="userData">
   <h1>{{ userData.username }}'s Profile</h1>
+
+  <img *ngIf="userData.profile_picture" [src]="userData.profile_picture" alt="Profile Picture" class="profile-picture" />
+  <img *ngIf="!userData.profile_picture" src="assets/default.jpg" alt="Default Avatar" class="profile-picture" />
+
+  
   <p>Name: {{ userData.firstname }}</p>
   <p>Looking For: {{ userData.lookingfor }}</p>
   <p>Orientation: {{ userData.sexualorientation }}</p>
