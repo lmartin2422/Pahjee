@@ -8,7 +8,11 @@ from typing import List, Optional
 from pydantic import BaseModel
 from sqlalchemy import extract, func
 from datetime import date
+from uszipcode import SearchEngine
 
+
+
+searcher = SearchEngine()  # fast mode
 router = APIRouter()
 
 class SearchFilters(BaseModel):
@@ -19,6 +23,15 @@ class SearchFilters(BaseModel):
     professionindustry: Optional[List[str]] = None
     min_age: Optional[int] = None
     max_age: Optional[int] = None
+
+
+
+@router.get("/locations")
+def get_locations(query: str = ""):
+    if len(query) < 2:
+        return []
+    results = searcher.by_city(query, returns=10)
+    return [f"{r.major_city}, {r.state}" for r in results if r.major_city]
 
 
 @router.post("/search")

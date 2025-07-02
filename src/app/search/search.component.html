@@ -60,13 +60,25 @@
     </div>
 
     <!-- LOCATION -->
-    <div class="filter-group">
-      <label>State:</label>
-      <div *ngFor="let s of locationOptions">
-        <input type="checkbox" [value]="s" (change)="onCheckboxChange('location', $event)" [checked]="filters.location.includes(s)" />
-        {{ s }}
-      </div>
+    <div class="form-group position-relative">
+      <label for="search-location">Location</label>
+      <input
+        id="search-location"
+        class="form-control"
+        [(ngModel)]="locationInput"
+        (input)="onLocationInput()"
+        (focus)="locationFocused = true"
+        (blur)="onLocationBlur()"
+        name="search-location"
+        autocomplete="off"
+      />
+      <ul *ngIf="locationSuggestions.length > 0 && locationFocused" class="suggestions-list">
+        <li *ngFor="let suggestion of locationSuggestions" (mousedown)="selectLocation(suggestion)">
+          {{ suggestion }}
+        </li>
+      </ul>
     </div>
+
 
     <!-- SEARCH + CLEAR -->
     <div class="filter-actions">
@@ -76,12 +88,6 @@
   </form>
 </div>
 
-
-    <!-- <div class="search-category">
-        <label for="username">Username:</label>
-        <input type="text" id="username" [(ngModel)]="usernameQuery" placeholder="Search by username" />
-        <button (click)="searchByUsername()">Search</button>
-    </div> -->
 
 
 <!-- 👤 USER RESULTS -->

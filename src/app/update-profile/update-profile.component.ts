@@ -32,6 +32,8 @@ export class UpdateProfileComponent implements OnInit {
 
 
 
+
+
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) 
     { this.profileForm = this.fb.group({
       firstname: [''],
@@ -222,22 +224,18 @@ removeImage(index: number) {
 
 
 onLocationInput() {
-  const query = this.profileForm.get('location')?.value;
-  if (query && query.length >= 2) {
-    this.fetchLocationSuggestions(query);
-  } else {
+  const q = this.profileForm.get('location')?.value;
+  if (!q || q.length < 2) {
     this.locationSuggestions = [];
+    return;
   }
-}
 
-fetchLocationSuggestions(query: string) {
-  // Replace this with a real API call if needed
-  const allLocations = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia'];
-  this.locationSuggestions = allLocations.filter(loc =>
-    loc.toLowerCase().includes(query.toLowerCase())
-  );
+  this.http.get<string[]>(`http://127.0.0.1:8000/locations`, { params: { query: q } })
+    .subscribe(
+      data => this.locationSuggestions = data,
+      error => this.locationSuggestions = []
+    );
 }
-
 
 selectLocation(location: string) {
   this.profileForm.get('location')?.setValue(location);
@@ -245,11 +243,8 @@ selectLocation(location: string) {
   this.locationFocused = false;
 }
 
-
 onLocationBlur() {
-  setTimeout(() => {
-    this.locationFocused = false;
-  }, 200); // delay to allow click
+  setTimeout(() => this.locationFocused = false, 200);
 }
 
 

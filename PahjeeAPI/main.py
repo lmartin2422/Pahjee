@@ -5,7 +5,7 @@ from database import SessionLocal, engine
 import models
 import os
 
-from routers import auth, pictures, messages, favorites, users, profile_pictures, search
+from routers import auth, pictures, messages, favorites, users, profile_pictures, search, locations
 
 # Create all tables
 models.Base.metadata.create_all(bind=engine)
@@ -33,6 +33,7 @@ app.include_router(favorites.router)
 app.include_router(users.router)
 app.include_router(profile_pictures.router)
 app.include_router(search.router)
+app.include_router(locations.router)
 
 # ✅ Optional test endpoint
 @app.get("/")

@@ -21,6 +21,11 @@ export class SearchComponent implements OnInit {
 
   ageOptions = ['18-24', '25-29', '30-39', '40+'];
 
+
+  locationInput = '';
+  locationSuggestions: string[] = [];
+  locationFocused = false;
+
   filters = {
     gender: [] as string[],
     ageRanges: [] as string[], // ✅ changed from ageRange string
@@ -73,41 +78,69 @@ export class SearchComponent implements OnInit {
     }
   }
 
-   performSearch(): void {
-  let minAge: number | null = 100;
-  let maxAge: number | null = 0;
+  performSearch(): void {
+      let minAge: number | null = 100;
+      let maxAge: number | null = 0;
 
-  this.filters.ageRanges.forEach(range => {
-    const [min, max] = this.parseAgeRange(range);
-      if (min !== undefined && (minAge === null || min < minAge)) {
-        minAge = min;
-      }
+      this.filters.ageRanges.forEach(range => {
+        const [min, max] = this.parseAgeRange(range);
+          if (min !== undefined && (minAge === null || min < minAge)) {
+            minAge = min;
+          }
 
-      if (max !== undefined && (maxAge === null || max > maxAge)) {
-        maxAge = max;
-      }
-   });
+          if (max !== undefined && (maxAge === null || max > maxAge)) {
+            maxAge = max;
+          }
+      });
 
-  if (minAge === 100) minAge = null;
-  if (maxAge === 0) maxAge = null;
+      if (minAge === 100) minAge = null;
+      if (maxAge === 0) maxAge = null;
 
-  const payload: any = {
-    gender: this.filters.gender,
-    lookingfor: this.filters.lookingfor,
-    location: this.filters.location,
-    sexualorientation: this.filters.sexualorientation,
-    professionindustry: this.filters.professionindustry,
-    min_age: minAge,
-    max_age: maxAge
-  };
+      const payload: any = {
+        gender: this.filters.gender,
+        lookingfor: this.filters.lookingfor,
+        location: this.filters.location,
+        sexualorientation: this.filters.sexualorientation,
+        professionindustry: this.filters.professionindustry,
+        min_age: minAge,
+        max_age: maxAge
+      };
 
-  this.userService.searchUsers(payload).subscribe({
-    next: (results: any[]) => {
-      this.loadProfilePictures(results);
-    },
-    error: (err) => console.error('Search failed:', err)
-  });
+      this.userService.searchUsers(payload).subscribe({
+        next: (results: any[]) => {
+          this.loadProfilePictures(results);
+        },
+        error: (err) => console.error('Search failed:', err)
+      });
+    }
+
+  onLocationInput() {
+    const query = this.locationInput.trim();
+    if (query.length < 2) {
+      this.locationSuggestions = [];
+      return;
+    }
+
+    this.http.get<string[]>(`http://127.0.0.1:8000/locations`, { params: { query } })
+      .subscribe(
+        data => this.locationSuggestions = data,
+        error => this.locationSuggestions = []
+      );
+  }
+
+selectLocation(loc: string) {
+  if (!this.filters.location.includes(loc)) {
+    this.filters.location.push(loc);
+  }
+  this.locationInput = '';
+  this.locationSuggestions = [];
+  this.locationFocused = false;
+  }
+
+onLocationBlur() {
+  setTimeout(() => this.locationFocused = false, 200);
 }
+
 
 
   loadProfilePictures(users: any[]): void {

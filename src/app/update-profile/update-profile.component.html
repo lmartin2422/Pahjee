@@ -18,8 +18,9 @@
 
     <!-- Location -->
     <div class="form-group position-relative">
-      <label>Location</label>
+      <label for="location">Location</label>
       <input
+        id="location"
         class="form-control"
         formControlName="location"
         (input)="onLocationInput()"
@@ -27,19 +28,12 @@
         (blur)="onLocationBlur()"
         autocomplete="off"
       />
-      <ul
-        *ngIf="locationSuggestions.length > 0 && locationFocused"
-        class="suggestions-list"
-      >
-        <li
-          *ngFor="let suggestion of locationSuggestions"
-          (mousedown)="selectLocation(suggestion)"
-        >
+      <ul *ngIf="locationSuggestions.length > 0 && locationFocused" class="suggestions-list">
+        <li *ngFor="let suggestion of locationSuggestions" (mousedown)="selectLocation(suggestion)">
           {{ suggestion }}
         </li>
       </ul>
     </div>
-
 
     <!-- Bio -->
     <div class="form-group">
