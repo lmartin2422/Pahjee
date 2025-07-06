@@ -16,24 +16,24 @@
     </div>
 
 
-    <!-- Location -->
-    <div class="form-group position-relative">
-      <label for="location">Location</label>
-      <input
-        id="location"
-        class="form-control"
-        formControlName="location"
-        (input)="onLocationInput()"
-        (focus)="locationFocused = true"
-        (blur)="onLocationBlur()"
-        autocomplete="off"
-      />
-      <ul *ngIf="locationSuggestions.length > 0 && locationFocused" class="suggestions-list">
-        <li *ngFor="let suggestion of locationSuggestions" (mousedown)="selectLocation(suggestion)">
-          {{ suggestion }}
-        </li>
-      </ul>
-    </div>
+<!-- 📍 Location Input -->
+<div class="form-group position-relative">
+  <label for="location">Location</label>
+  <input
+    id="location"
+    class="form-control"
+    formControlName="location"
+    (focus)="locationFocused = true"
+    (blur)="onLocationBlur()"
+    list="locationList"
+    placeholder="Enter a city or state..."
+    autocomplete="off"
+  />
+  <datalist id="locationList">
+    <option *ngFor="let loc of locationOptions" [value]="loc"></option>
+  </datalist>
+</div>
+
 
     <!-- Bio -->
     <div class="form-group">
@@ -74,14 +74,26 @@
       </select>
     </div>
 
-    <!-- Profession/Industry Dropdown -->
-    <div class="form-group">
-      <label>Profession/Industry</label>
-      <select class="form-control" formControlName="professionindustry">
-        <option value="">Select</option>
-        <option *ngFor="let option of professionOptions" [value]="option">{{ option }}</option>
-      </select>
-    </div>
+<!-- PROFESSION AUTOCOMPLETE -->
+<div class="filter-group">
+  <label for="profession-input">Profession</label>
+  <input
+    id="profession-input"
+    type="text"
+    [(ngModel)]="professionInput"
+    name="profession-input"
+    list="professionList"
+    placeholder="Enter a profession"
+  />
+  <datalist id="professionList">
+    <option *ngFor="let prof of professionOptions" [value]="prof"></option>
+  </datalist>
+  <button type="button" (click)="selectProfession(professionInput)" [disabled]="!professionInput">Add</button>
+
+  <div *ngFor="let p of filters.professionindustry; let i = index">
+    {{ p }} <button type="button" (click)="filters.professionindustry.splice(i, 1)">x</button>
+  </div>
+</div>
 
 
     <!-- Modal -->

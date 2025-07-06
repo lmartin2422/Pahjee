@@ -50,34 +50,57 @@
       </div>
     </div>
 
-    <!-- PROFESSION -->
-    <div class="filter-group">
-      <label>Profession:</label>
-      <div *ngFor="let p of professionOptions">
-        <input type="checkbox" [value]="p" (change)="onCheckboxChange('professionindustry', $event)" [checked]="filters.professionindustry.includes(p)" />
-        {{ p }}
-      </div>
-    </div>
 
-    <!-- LOCATION -->
-    <div class="form-group position-relative">
-      <label for="search-location">Location</label>
-      <input
-        id="search-location"
-        class="form-control"
-        [(ngModel)]="locationInput"
-        (input)="onLocationInput()"
-        (focus)="locationFocused = true"
-        (blur)="onLocationBlur()"
-        name="search-location"
-        autocomplete="off"
-      />
-      <ul *ngIf="locationSuggestions.length > 0 && locationFocused" class="suggestions-list">
-        <li *ngFor="let suggestion of locationSuggestions" (mousedown)="selectLocation(suggestion)">
-          {{ suggestion }}
-        </li>
-      </ul>
+<!-- PROFESSION AUTOCOMPLETE -->
+<div class="filter-group">
+  <label for="profession-input">Profession</label>
+  <input
+    id="profession-input"
+    type="text"
+    [(ngModel)]="professionInput"
+    name="profession-input"
+    list="professionList"
+    placeholder="Enter a profession"
+  />
+  <datalist id="professionList">
+    <option *ngFor="let prof of professionOptions" [value]="prof"></option>
+  </datalist>
+  <button type="button" (click)="selectProfession(professionInput)" [disabled]="!professionInput">Add</button>
+
+  <div *ngFor="let p of filters.professionindustry; let i = index">
+    {{ p }} <button type="button" (click)="filters.professionindustry.splice(i, 1)">x</button>
+  </div>
+</div>
+
+<!-- LOCATION FILTER -->
+<div class="filter-group">
+  <label for="search-location">Location</label>
+  <input
+    id="search-location"
+    class="form-control"
+    type="text"
+    [(ngModel)]="locationInput"
+    (focus)="locationFocused = true"
+    (blur)="onLocationBlur()"
+    list="locationList"
+    name="search-location"
+    placeholder="Enter a city..."
+  />
+  <datalist id="locationList">
+    <option *ngFor="let loc of locationOptions" [value]="loc"></option>
+  </datalist>
+  <button type="button" (click)="selectLocation(locationInput)" [disabled]="!locationInput">Add</button>
+
+  <!-- Show selected -->
+  <div class="selected-locations">
+    <div *ngFor="let loc of filters.location; let i = index">
+      {{ loc }}
+      <button type="button" (click)="filters.location.splice(i, 1)">x</button>
     </div>
+  </div>
+</div>
+
+
 
 
     <!-- SEARCH + CLEAR -->
