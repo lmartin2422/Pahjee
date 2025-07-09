@@ -48,10 +48,23 @@ def get_public_user_info(user_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
-    updated = user_service.update_user(db, user_id, data)
-    if not updated:
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return updated
+
+    # Ensure professionindustry is a string (if it's an array, join it into a string)
+    if isinstance(data.professionindustry, list):
+        data.professionindustry = ', '.join(data.professionindustry)  # Convert array to a string
+
+    # Update the user attributes, including professionindustry
+    for key, value in data.dict(exclude_unset=True).items():
+        setattr(db_user, key, value)
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):

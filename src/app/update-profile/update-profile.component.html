@@ -16,6 +16,7 @@
     </div>
 
 
+
 <!-- 📍 Location Input -->
 <div class="form-group position-relative">
   <label for="location">Location</label>
@@ -74,26 +75,37 @@
       </select>
     </div>
 
-<!-- PROFESSION AUTOCOMPLETE -->
-<div class="filter-group">
+<!-- Profession Input with Autocomplete -->
+ <div class="form-group">
   <label for="profession-input">Profession</label>
-  <input
-    id="profession-input"
-    type="text"
-    [(ngModel)]="professionInput"
-    name="profession-input"
+  <input 
+    id="profession-input" 
+    class="form-control"
+    type="text" 
+    formControlName="professionindustry"
     list="professionList"
-    placeholder="Enter a profession"
+    placeholder="Type to select a profession"
+    (input)="filterProfessions($event)"  
   />
-  <datalist id="professionList">
-    <option *ngFor="let prof of professionOptions" [value]="prof"></option>
-  </datalist>
-  <button type="button" (click)="selectProfession(professionInput)" [disabled]="!professionInput">Add</button>
 
-  <div *ngFor="let p of filters.professionindustry; let i = index">
-    {{ p }} <button type="button" (click)="filters.professionindustry.splice(i, 1)">x</button>
+  
+  <!-- Datalist for matching profession options -->
+  <datalist id="professionList">
+    <option *ngFor="let prof of filteredProfessions" [value]="prof"></option>
+  </datalist>
+
   </div>
+
+
+<!-- Display the selected profession -->
+<div *ngIf="profileForm.get('professionindustry')?.value">
+  {{ profileForm.get('professionindustry')?.value }}
 </div>
+
+
+
+
+
 
 
     <!-- Modal -->
@@ -166,8 +178,9 @@
 
 
     <!-- Save Button -->
-   <div>
-    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-     </div>
-   </form>
+    <div>
+      <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </div>
+
+  </form>
 </div>

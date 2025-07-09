@@ -24,24 +24,26 @@ export class MyProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('✅ MyProfileComponent loaded!');
-    const token = localStorage.getItem('access_token');
-    const userId = localStorage.getItem('user_id');
+  console.log('✅ MyProfileComponent loaded!');
+  const token = localStorage.getItem('access_token');
+  const userId = localStorage.getItem('user_id');
 
-    if (!token || !userId) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    this.loadProfile();
-    this.loadPictures();
-
-    if (history.state.updated) {
-      console.log('Detected updated flag in navigation state');
-      this.loadProfile();
-      this.loadPictures();
-    }
+  if (!token || !userId) {
+    this.router.navigate(['/login']);
+    return;
   }
+
+  this.loadProfile();
+  this.loadPictures();
+
+  // Check for 'updated' flag in the state
+  if (history.state.updated) {
+    console.log('Detected updated flag in navigation state');
+    this.loadProfile();  // Reload profile with updated data
+    this.loadPictures();  // Reload pictures if necessary
+  }
+}
+
 
   loadProfile(): void {
     const userId = localStorage.getItem('user_id');

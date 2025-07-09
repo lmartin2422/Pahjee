@@ -1,6 +1,8 @@
 from sqlalchemy import ( Column, DateTime, Integer, String, Text, Boolean, Date, TIMESTAMP, ForeignKey)
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import ARRAY  # Add the ARRAY import
+
 
 from datetime import datetime  # Add this import at the top
 
@@ -26,7 +28,9 @@ class User(Base):
     birthdate = Column(Date, nullable=True)
     lookingfor = Column(String, nullable=True)
     sexualorientation = Column(String, nullable=True)
-    professionindustry = Column(String, nullable=True)
+
+
+    professionindustry = Column(String, nullable=True)  # Make sure it's a String here
 
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
