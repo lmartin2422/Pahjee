@@ -12,6 +12,8 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { AuthGuard } from './auth.guard';
+import { AccountSettingsComponent } from './account-settings/account-settings.component'; // Import the new component
+
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,6 +30,8 @@ export const routes: Routes = [
   { path: 'update-profile', component: UpdateProfileComponent, canActivate: [AuthGuard] },
   { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard] },
   { path: 'view-profile/:id', component: ViewProfileComponent, canActivate: [AuthGuard] },
+
+   { path: 'account-settings', component: AccountSettingsComponent },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/home', pathMatch: 'full' }

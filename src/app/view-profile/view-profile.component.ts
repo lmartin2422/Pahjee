@@ -19,17 +19,17 @@ export class ViewProfileComponent implements OnInit {
   viewedUserId!: number;        // ID of the profile being viewed
   userData!: User;              // Data of the profile being viewed
   messageContent = '';
-  isFavorite = false
-  
+  isFavorite = false;
+
+  otherPictures: string[] = []; // Array to hold other pictures
 
   constructor(
-  private route: ActivatedRoute,
-  private router: Router, // ✅ ADD THIS
-  private userService: UserService,
-  private messageService: MessageService,
-  private http: HttpClient
-) {}
-
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private messageService: MessageService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     const storedUserId = localStorage.getItem('user_id');
@@ -74,9 +74,21 @@ export class ViewProfileComponent implements OnInit {
         console.error('Error fetching user data:', err);
       }
     });
-  }
 
-
+   
+ // Fetch other pictures (excluding the profile picture)
+  this.http.get<any[]>(`http://127.0.0.1:8000/pictures/user/${this.viewedUserId}/other-pictures`).subscribe({
+    next: (pictures) => {
+      console.log('Fetched other pictures:', pictures);  // Debugging line
+      this.otherPictures = pictures.map(pic => pic.image_url.startsWith('http')
+        ? pic.image_url
+        : `http://127.0.0.1:8000${pic.image_url}`);
+    },
+    error: () => {
+      console.log('No other pictures found');
+    }
+  });
+}
 
   checkIfFavorite(): void {
     this.http.get<any[]>(`http://127.0.0.1:8000/users/${this.userId}/favorites`).subscribe({
@@ -92,33 +104,31 @@ export class ViewProfileComponent implements OnInit {
   addFavorite(): void {
     if (!this.userId || !this.viewedUserId) return;
 
-    this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {})
-      .subscribe({
-        next: () => {
-          this.isFavorite = true;
-          alert('✅ User added to favorites!');
-        },
-        error: (err: any) => {
-          console.error('Error adding favorite:', err);
-          alert('❌ Could not add to favorites.');
-        }
-      });
+    this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {}).subscribe({
+      next: () => {
+        this.isFavorite = true;
+        alert('✅ User added to favorites!');
+      },
+      error: (err: any) => {
+        console.error('Error adding favorite:', err);
+        alert('❌ Could not add to favorites.');
+      }
+    });
   }
 
   removeFavorite(): void {
     if (!this.userId || !this.viewedUserId) return;
 
-    this.http.delete(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`)
-      .subscribe({
-        next: () => {
-          this.isFavorite = false;
-          alert('❌ User removed from favorites.');
-        },
-        error: (err: any) => {
-          console.error('Error removing favorite:', err);
-          alert('❌ Could not remove from favorites.');
-        }
-      });
+    this.http.delete(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`).subscribe({
+      next: () => {
+        this.isFavorite = false;
+        alert('❌ User removed from favorites.');
+      },
+      error: (err: any) => {
+        console.error('Error removing favorite:', err);
+        alert('❌ Could not remove from favorites.');
+      }
+    });
   }
 
   sendMessage(): void {
@@ -137,5 +147,4 @@ export class ViewProfileComponent implements OnInit {
       }
     });
   }
-
 }

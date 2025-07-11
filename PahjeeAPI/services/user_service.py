@@ -52,13 +52,22 @@ def update_user(db: Session, user_id: int, data: UserUpdate):
     db.refresh(user)
     return user
 
-def delete_user(db: Session, user_id: int):
-    user = get_user_by_id(db, user_id)
+# def delete_user(db: Session, user_id: int):
+#     user = get_user_by_id(db, user_id)
+#     if user:
+#         db.delete(user)
+#         db.commit()
+#         return True
+#     return False
+
+def deactivate_account(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
     if user:
-        db.delete(user)
+        user.is_active = False
         db.commit()
         return True
     return False
+
 
 def search_users(db: Session, filters: dict):
     query = db.query(User)

@@ -92,6 +92,11 @@ export class UserService {
   }
 
 
+  deactivateAccount(userId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/users/${userId}/deactivate`, {});
+  }
+
+
 }
 
 

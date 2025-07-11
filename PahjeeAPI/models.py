@@ -34,6 +34,8 @@ class User(Base):
 
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
+    is_active = Column(Boolean, default=True)
+
     # Relationships
     pictures = relationship("Picture", back_populates="user", cascade="all, delete")
     sent_messages = relationship("Message", back_populates="sender", foreign_keys="Message.sender_id", cascade="all, delete")

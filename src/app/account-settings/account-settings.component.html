@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h2>Account Settings</h2>
+
+  <!-- Deactivate Account Section -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Deactivate Account</h5>
+      <p class="card-text">If you no longer wish to use our service, you can deactivate your account. Please note that this action cannot be undone.</p>
+      <button class="btn btn-danger" (click)="deactivateAccount()">Deactivate Account</button>
+    </div>
+  </div>
+
+  <!-- Notifications Section -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Manage Notifications</h5>
+      <p class="card-text">Enable or disable notifications for updates and other features.</p>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="notificationSwitch" [(ngModel)]="notificationsEnabled" (change)="toggleNotifications()">
+        <label class="form-check-label" for="notificationSwitch">Notifications are {{ notificationsEnabled ? 'Enabled' : 'Disabled' }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Email Section (Optional) -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Update Email</h5>
+      <form>
+        <div class="mb-3">
+          <label for="emailInput" class="form-label">New Email</label>
+          <input type="email" class="form-control" id="emailInput" placeholder="Enter your new email">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Email</button>
+      </form>
+    </div>
+  </div>
+</div>

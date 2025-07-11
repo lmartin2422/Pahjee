@@ -66,11 +66,23 @@ def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
 
 
 
-@router.delete("/{user_id}")
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    if not user_service.delete_user(db, user_id):
+@router.put("/{user_id}/deactivate")
+def deactivate_account(user_id: int, db: Session = Depends(get_db)):
+    # Fetch the user
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted"}
+
+    # Deactivate the account (set is_active to False)
+    db_user.is_active = False
+    db.commit()  # Save the changes to the database
+    db.refresh(db_user)  # Refresh the user to get the updated state
+
+    return {"message": "Account deactivated successfully"}
+
+
+
+
 
 @router.post("/search", response_model=List[schemas.UserResponse])
 def search_users(filters: schemas.SearchFilters, db: Session = Depends(get_db)):

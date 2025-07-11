@@ -21,7 +21,7 @@ export class UpdateProfileComponent implements OnInit {
 
   genderOptions = ['Male', 'Female', 'Non-binary', 'Other'];
   orientationOptions = ['Straight', 'Gay', 'Bisexual', 'Asexual', 'Other'];
-  lookingForOptions = ['Relationship', 'Dates', 'Hook Up', 'Friendship'];
+  lookingForOptions = ['Friends', 'Networking', 'Dates','Relationship', 'Other'];
   
   professionInput: string = '';
   filteredProfessions: string[] = [];
