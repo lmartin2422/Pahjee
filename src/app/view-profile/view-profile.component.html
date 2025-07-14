@@ -1,39 +1,68 @@
-<div *ngIf="userData">
-  <h1>{{ userData.username }}'s Profile</h1>
+<mat-card *ngIf="userData" class="profile-card">
+  <mat-card-title>{{ userData.username }}'s profile</mat-card-title>
+  <mat-card-header>
+    <!-- <mat-card-title>{{ userData.username }}'s Profile</mat-card-title> -->
 
-  <!-- Profile Picture -->
-  <img *ngIf="userData.profile_picture" [src]="userData.profile_picture" alt="Profile Picture" class="profile-picture" />
-  <img *ngIf="!userData.profile_picture" src="assets/default.jpg" alt="Default Avatar" class="profile-picture" />
+    <div mat-card-avatar class="profile-picture">
+      <!-- Profile Picture -->
+      <img *ngIf="userData.profile_picture" [src]="userData.profile_picture" alt="Profile Picture" class="profile-picture-img" />
+      <img *ngIf="!userData.profile_picture" src="assets/default.jpg" alt="Default Avatar" class="profile-picture-img" />
+    </div>
+    
+  </mat-card-header>
 
-<!-- Display Other Pictures -->
-<div *ngIf="otherPictures.length > 0">
-  <h3>Other Pictures</h3>
-  <div class="additional-pictures">
-    <img *ngFor="let img of otherPictures" [src]="img" alt="User's Additional Picture" class="profile-picture" />
-  </div>
-</div>
+  <mat-card-content>
+    <!-- Tabs for additional sections like About, Pictures, etc. -->
+    <p>
+    </p>
+    <p>
+    </p>
+    <p>
+    </p>
 
 
-  <p>Name: {{ userData.firstname }}</p>
-  <p>Looking For: {{ userData.lookingfor }}</p>
-  <p>Orientation: {{ userData.sexualorientation }}</p>
-  <p>Gender: {{ userData.gender }}</p>
-  <p>Location: {{ userData.location }}</p>
-  <p>Birthdate: {{ userData.birthdate }}</p>
-  <p>Profession: {{ userData.professionindustry }}</p>
-  <p>{{ userData.bio }}</p>
+    <mat-tab-group>
+      <mat-tab label="About">
+         <!-- <mat-icon matTabLabel>person</mat-icon> -->
+        <div class="profile-info">
+          <p><strong>Name:</strong> {{ userData.firstname }}</p>
+          <p><strong>Looking For:</strong> {{ userData.lookingfor }}</p>
+          <p><strong>Orientation:</strong> {{ userData.sexualorientation }}</p>
+          <p><strong>Gender:</strong> {{ userData.gender }}</p>
+          <p><strong>Location:</strong> {{ userData.location }}</p>
+          <p><strong>Birthdate:</strong> {{ userData.birthdate | date }}</p>
+          <p><strong>Profession:</strong> {{ userData.professionindustry }}</p>
+          <p><strong>Bio:</strong> {{ userData.bio }}</p>
+        </div>
+      </mat-tab>
 
-  <!-- Favorites Toggle Button -->
-  <button *ngIf="!isFavorite" (click)="addFavorite()">❤️ Add to Favorites</button>
-  <button *ngIf="isFavorite" (click)="removeFavorite()">💔 Remove from Favorites</button>
+      <mat-tab label="Pictures">
+        <!-- <mat-icon matTabLabel>photo_camera</mat-icon> -->
+        <!-- Display Other Pictures -->
+        <div *ngIf="otherPictures.length > 0">
+          
+          <div class="additional-pictures">
+            <img *ngFor="let img of otherPictures" [src]="img" alt="User's Additional Picture" class="profile-picture-img" />
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
 
-  <!-- Message Form -->
-  <div style="margin-top: 20px;">
-    <h2>Send Message</h2>
-    <form (ngSubmit)="sendMessage()">
-      <textarea [(ngModel)]="messageContent" name="messageContent" required></textarea>
-      <br>
-      <button type="submit">📨 Send</button>
-    </form>
-  </div>
-</div>
+    <!-- Favorites Toggle Button -->
+    <div class="favorite-button">
+      <button *ngIf="!isFavorite" mat-raised-button color="primary" (click)="addFavorite()">❤️ Add to Favorites</button>
+      <button *ngIf="isFavorite" mat-raised-button color="warn" (click)="removeFavorite()">💔 Remove from Favorites</button>
+    </div>
+
+    <!-- Message Form -->
+    <div class="message-form">
+      <h3>Send Message</h3>
+      <form (ngSubmit)="sendMessage()">
+        <mat-form-field appearance="fill" class="full-width">
+          <textarea matInput [(ngModel)]="messageContent" name="messageContent" required></textarea>
+        </mat-form-field>
+        <button mat-raised-button color="accent" type="submit">📨 Send</button>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
+
+import { MatDialog } from '@angular/material/dialog';
+import { ImageUploadDialogComponent } from '../image-upload-dialog/image-upload-dialog.component';
+
+
 @Component({
   selector: 'app-messages-list',
   standalone: true,
@@ -17,8 +22,10 @@ export class MessagesListComponent implements OnInit {
   messages: any[] = [];
   partnerNames: { [userId: number]: string } = {}
   partnerData: { [userId: number]: { name: string, profilePic: string } } = {};
-
-  constructor(private http: HttpClient, private router: Router) {}
+  isTyping = false;
+  
+  
+  constructor(private http: HttpClient, private router: Router, private dialog: MatDialog) {}
 
   
   
@@ -87,9 +94,26 @@ export class MessagesListComponent implements OnInit {
       });
     }
 
+     openMediaDialog() {
+    const dialogRef = this.dialog.open(ImageUploadDialogComponent);
 
-  
+    dialogRef.afterClosed().subscribe((file) => {
+      if (file) {
+        // Handle file upload logic and send message with the file
+      }
+    });
+  }
 
+   onTyping() {
+    this.isTyping = true;
+    // Optionally reset typing after some time
+    setTimeout(() => this.isTyping = false, 1000);
+  }
+
+  sendMessage() {
+    this.isTyping = false;
+    // Logic to send the message
+  }
 
 
 openConversation(partnerId: number): void {

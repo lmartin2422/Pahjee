@@ -11,6 +11,8 @@ import { HttpClientModule } from '@angular/common/http'; // No need for HTTP_INT
 // ✅ Define the functional interceptor
 import { HttpInterceptorFn } from '@angular/common/http';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 // ✅ Define the interceptor function here
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -31,7 +33,7 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([authInterceptor]) // ✅ Register the functional interceptor here
     ),
-    importProvidersFrom(ReactiveFormsModule, HttpClientModule),
+    importProvidersFrom(ReactiveFormsModule, HttpClientModule, BrowserAnimationsModule),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     provideClientHydration()

@@ -1,0 +1,41 @@
+/* Profile Card Styling */
+.profile-card {
+  max-width: 100%;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Adjust Profile Picture */
+.profile-picture-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 10px;
+  }
+  .profile-picture-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  mat-tab-group {
+    font-size: 14px; /* Make tabs more compact on smaller screens */
+  }
+  .message-form {
+    width: 100%;
+  }
+}
+
+/* Additional styling for form and buttons */
+button {
+  width: 100%;  /* Ensure buttons fill available space on mobile */
+}
+
+mat-form-field {
+  width: 100%; /* Form fields should take full width */
+}

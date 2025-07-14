@@ -7,10 +7,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-view-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,  MatCardModule, MatTabsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule],  // Add the Material modules
   templateUrl: './view-profile.component.html',
   styleUrls: ['./view-profile.component.css']
 })
@@ -20,7 +28,6 @@ export class ViewProfileComponent implements OnInit {
   userData!: User;              // Data of the profile being viewed
   messageContent = '';
   isFavorite = false;
-
   otherPictures: string[] = []; // Array to hold other pictures
 
   constructor(
@@ -56,8 +63,6 @@ export class ViewProfileComponent implements OnInit {
     this.userService.getUserById(this.viewedUserId).subscribe({
       next: user => {
         this.userData = user;
-
-        // Fetch profile picture
         this.http.get<any>(`http://127.0.0.1:8000/profile-picture/${this.viewedUserId}`).subscribe({
           next: (pic) => {
             this.userData.profile_picture = pic.image_url.startsWith('http')
@@ -68,27 +73,23 @@ export class ViewProfileComponent implements OnInit {
             console.log('No profile picture found');
           }
         });
-
       },
       error: err => {
         console.error('Error fetching user data:', err);
       }
     });
 
-   
- // Fetch other pictures (excluding the profile picture)
-  this.http.get<any[]>(`http://127.0.0.1:8000/pictures/user/${this.viewedUserId}/other-pictures`).subscribe({
-    next: (pictures) => {
-      console.log('Fetched other pictures:', pictures);  // Debugging line
-      this.otherPictures = pictures.map(pic => pic.image_url.startsWith('http')
-        ? pic.image_url
-        : `http://127.0.0.1:8000${pic.image_url}`);
-    },
-    error: () => {
-      console.log('No other pictures found');
-    }
-  });
-}
+    this.http.get<any[]>(`http://127.0.0.1:8000/pictures/user/${this.viewedUserId}/other-pictures`).subscribe({
+      next: (pictures) => {
+        this.otherPictures = pictures.map(pic => pic.image_url.startsWith('http')
+          ? pic.image_url
+          : `http://127.0.0.1:8000${pic.image_url}`);
+      },
+      error: () => {
+        console.log('No other pictures found');
+      }
+    });
+  }
 
   checkIfFavorite(): void {
     this.http.get<any[]>(`http://127.0.0.1:8000/users/${this.userId}/favorites`).subscribe({
@@ -103,7 +104,6 @@ export class ViewProfileComponent implements OnInit {
 
   addFavorite(): void {
     if (!this.userId || !this.viewedUserId) return;
-
     this.http.post(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`, {}).subscribe({
       next: () => {
         this.isFavorite = true;
@@ -118,7 +118,6 @@ export class ViewProfileComponent implements OnInit {
 
   removeFavorite(): void {
     if (!this.userId || !this.viewedUserId) return;
-
     this.http.delete(`http://127.0.0.1:8000/users/${this.userId}/favorites/${this.viewedUserId}`).subscribe({
       next: () => {
         this.isFavorite = false;
@@ -134,11 +133,9 @@ export class ViewProfileComponent implements OnInit {
   sendMessage(): void {
     const senderId = this.userId;
     const recipientId = this.viewedUserId;
-
     this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
       next: () => {
         this.messageContent = '';
-        // ✅ Redirect to messages page
         window.alert('Message sent!');
         this.router.navigate(['/messages']);
       },

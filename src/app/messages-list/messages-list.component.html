@@ -1,41 +1,60 @@
-<div class="threads-container">
-  <h2>Messages</h2>
+<!-- Threads List -->
+<mat-card class="threads-container">
+  <mat-card-header>
+    <mat-card-title>Messages</mat-card-title>
+  </mat-card-header>
 
-<div class="threads-container">
- 
-
-  <div
-    *ngFor="let thread of threads"
-    (click)="openConversation(thread.sender_id === userId ? thread.recipient_id : thread.sender_id)"
-    class="thread-card"
-  >
-    <ng-container *ngIf="partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id] as data">
-      <img
-        [src]="data.profilePic"
-        (error)="data.profilePic = 'assets/default-avatar.png'"
-        alt="Profile"
-        class="profile-pic"
-      />
-
-      <div class="thread-content">
-        <div class="thread-header">
-          <strong>{{ data.name }}</strong>
-          <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
-        </div>
-        <p class="preview">{{ thread.content }}</p>
-      </div>
-    </ng-container>
+  <div class="thread-list">
+    <div
+      *ngFor="let thread of threads"
+      (click)="openConversation(thread.sender_id === userId ? thread.recipient_id : thread.sender_id)"
+      class="thread-card"
+    >
+      <ng-container *ngIf="partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id] as data">
+        <mat-card-avatar>
+          <img [src]="data.profilePic" (error)="data.profilePic = 'assets/default-avatar.png'" alt="Profile" class="profile-pic" />
+        </mat-card-avatar>
+        <mat-card-content>
+          <div class="thread-header">
+            <strong>{{ data.name }}</strong>
+            <span class="timestamp">{{ thread.sent_at | date:'shortTime' }}</span>
+          </div>
+          <p class="preview">{{ thread.content }}</p>
+        </mat-card-content>
+      </ng-container>
+    </div>
   </div>
-</div>
+</mat-card>
 
-  <!-- 🟦 Expanded conversation area -->
-  <div *ngIf="selectedPartnerId !== null" class="conversation-box">
-    <h3>Conversation with User {{ selectedPartnerId }}</h3>
-    <div class="message-thread">
-      <div *ngFor="let msg of messages" class="message-bubble"
-           [ngClass]="{ 'sent': msg.sender_id === userId, 'received': msg.sender_id !== userId }">
-        {{ msg.content }}
+<!-- Expanded Conversation Box -->
+<mat-card *ngIf="selectedPartnerId !== null" class="conversation-box">
+  <mat-card-header>
+    <mat-card-title>Conversation with User {{ selectedPartnerId }}</mat-card-title>
+  </mat-card-header>
+  <div class="message-thread">
+    <div *ngFor="let msg of messages" class="message-bubble"
+         [ngClass]="{ 'sent': msg.sender_id === userId, 'received': msg.sender_id !== userId }">
+      <div class="message-content">
+        <p>{{ msg.content }}</p>
+        <div *ngIf="msg.media">
+          <img *ngIf="msg.media.type === 'image'" [src]="msg.media.url" alt="Message Image" class="message-img" />
+          <video *ngIf="msg.media.type === 'video'" controls>
+            <source [src]="msg.media.url" type="video/mp4" />
+          </video>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Message Input -->
+  <mat-card-footer class="message-input">
+    <textarea matInput [(ngModel)]="messageContent" placeholder="Type your message..." rows="3" (input)="onTyping()"></textarea>
+    <div *ngIf="isTyping">User is typing...</div>
+    <button mat-icon-button (click)="sendMessage()">
+      <mat-icon>send</mat-icon>
+    </button>
+    <button mat-icon-button (click)="openMediaDialog()">
+      <mat-icon>attach_file</mat-icon>
+    </button>
+  </mat-card-footer>
+</mat-card>
