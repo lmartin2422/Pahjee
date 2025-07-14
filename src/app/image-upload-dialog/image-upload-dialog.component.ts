@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';  // Import MatDialogModule
+
 
 @Component({
   selector: 'app-image-upload-dialog',
   templateUrl: './image-upload-dialog.component.html',
+  standalone: true,
+  imports: [MatDialogModule],  // Add MatDialogModule here
 })
 export class ImageUploadDialogComponent {
   selectedFile: File | null = null;

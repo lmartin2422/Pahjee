@@ -30,6 +30,7 @@ export const routes: Routes = [
   { path: 'update-profile', component: UpdateProfileComponent, canActivate: [AuthGuard] },
   { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard] },
   { path: 'view-profile/:id', component: ViewProfileComponent, canActivate: [AuthGuard] },
+  { path: 'view-profile/:userId', component: ViewProfileComponent, canActivate: [AuthGuard] },
 
    { path: 'account-settings', component: AccountSettingsComponent },
 

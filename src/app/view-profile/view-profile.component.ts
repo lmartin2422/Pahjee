@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./view-profile.component.css']
 })
 export class ViewProfileComponent implements OnInit {
-  userId!: number;              // Logged-in user ID
+  userId: number | null = null;
   viewedUserId!: number;        // ID of the profile being viewed
   userData!: User;              // Data of the profile being viewed
   messageContent = '';
@@ -39,25 +39,26 @@ export class ViewProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const storedUserId = localStorage.getItem('user_id');
-    if (storedUserId) {
-      this.userId = +storedUserId;
-    } else {
-      console.error('No logged-in user ID found in localStorage.');
-      return;
+      const storedUserId = localStorage.getItem('user_id');
+      if (storedUserId) {
+        this.userId = +storedUserId;
+      } else {
+        console.error('No logged-in user ID found in localStorage.');
+        return;
+      }
+
+      this.route.paramMap.subscribe(params => {
+        const idParam = params.get('id');
+        if (idParam && !isNaN(+idParam)) {
+          this.viewedUserId = +idParam;
+          this.fetchUser();
+          this.checkIfFavorite();
+        } else {
+          console.error('Invalid or missing user ID in route:', idParam);
+        }
+      });
     }
 
-    this.route.paramMap.subscribe(params => {
-      const idParam = params.get('id');
-      if (idParam && !isNaN(+idParam)) {
-        this.viewedUserId = +idParam;
-        this.fetchUser();
-        this.checkIfFavorite();
-      } else {
-        console.error('Invalid or missing user ID in route:', idParam);
-      }
-    });
-  }
 
   fetchUser(): void {
     this.userService.getUserById(this.viewedUserId).subscribe({
@@ -130,18 +131,26 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
+  
+
   sendMessage(): void {
-    const senderId = this.userId;
-    const recipientId = this.viewedUserId;
-    this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
-      next: () => {
-        this.messageContent = '';
-        window.alert('Message sent!');
-        this.router.navigate(['/messages']);
-      },
-      error: err => {
-        window.alert('Failed to send message: ' + err.message);
-      }
-    });
+  if (this.userId === null || this.viewedUserId === null) {
+    console.error('User ID or Viewed User ID is null');
+    return;
   }
+  const senderId = this.userId;  // Now, we know this is not null
+  const recipientId = this.viewedUserId;
+
+  this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
+    next: () => {
+      this.messageContent = '';
+      window.alert('Message sent!');
+      this.router.navigate(['/messages']);
+    },
+    error: err => {
+      window.alert('Failed to send message: ' + err.message);
+    }
+  });
+}
+
 }

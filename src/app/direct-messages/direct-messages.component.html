@@ -1,16 +1,27 @@
 <div class="conversation-page">
- <h2>Conversation with {{ displayName }}</h2>
+  <!-- Back Button with Routing to Messages List -->
+  <button mat-button class="back-button" (click)="goBack()">← Back</button>
 
+  <!-- Profile Thumbnail with Routing to User Profile -->
+  <div *ngIf="recipientProfile" class="profile-thumbnail-container">
+    <a [routerLink]="['/view-profile', partnerId]">
+      <img [src]="recipientProfile.profilePic" alt="Profile Picture" class="profile-thumbnail" />
+    </a>
+  </div>
 
+  <!-- Message Thread -->
   <div class="message-thread">
     <div *ngFor="let msg of messages" class="message-bubble"
          [ngClass]="{ 'sent': msg.sender_id === userId, 'received': msg.sender_id !== userId }">
-      {{ msg.content }}
+      <div class="message-content">
+        {{ msg.content }}
+      </div>
     </div>
   </div>
 
+  <!-- Message Input -->
   <div class="send-box">
     <input [(ngModel)]="newMessage" placeholder="Type a message..." />
-    <button (click)="sendMessage()">Send</button>
+    <button mat-button (click)="sendMessage()">Send</button>
   </div>
 </div>

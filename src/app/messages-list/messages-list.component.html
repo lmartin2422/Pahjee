@@ -11,9 +11,16 @@
       class="thread-card"
     >
       <ng-container *ngIf="partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id] as data">
-        <mat-card-avatar>
-          <img [src]="data.profilePic" (error)="data.profilePic = 'assets/default-avatar.png'" alt="Profile" class="profile-pic" />
-        </mat-card-avatar>
+        <!-- Make profile picture clickable, routing to the correct profile page -->
+        <a [routerLink]="['/view-profile', partnerData[thread.sender_id === userId ? thread.recipient_id : thread.sender_id].userId]">
+          <img 
+            [src]="data.profilePic" 
+            (error)="data.profilePic = 'assets/default-avatar.png'" 
+            alt="Profile" 
+            class="profile-pic" 
+          />
+        </a>
+
         <mat-card-content>
           <div class="thread-header">
             <strong>{{ data.name }}</strong>
@@ -29,8 +36,20 @@
 <!-- Expanded Conversation Box -->
 <mat-card *ngIf="selectedPartnerId !== null" class="conversation-box">
   <mat-card-header>
-    <mat-card-title>Conversation with User {{ selectedPartnerId }}</mat-card-title>
+    <!-- Back Button to navigate to the Messages list -->
+    <button mat-button (click)="goBack()">← Back</button>
+
+    <!-- Profile Pic with routing to profile page -->
+    <a [routerLink]="['/view-profile', partnerData[selectedPartnerId].userId]">
+      <img 
+        [src]="partnerData[selectedPartnerId].profilePic" 
+        (error)="partnerData[selectedPartnerId].profilePic = 'assets/default-avatar.png'" 
+        alt="Profile" 
+        class="profile-pic" 
+      />
+    </a>
   </mat-card-header>
+
   <div class="message-thread">
     <div *ngFor="let msg of messages" class="message-bubble"
          [ngClass]="{ 'sent': msg.sender_id === userId, 'received': msg.sender_id !== userId }">
