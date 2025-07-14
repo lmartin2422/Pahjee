@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 
 
 import { MatDialog } from '@angular/material/dialog';
+import { MatCard } from '@angular/material/card';
+
 import { ImageUploadDialogComponent } from '../image-upload-dialog/image-upload-dialog.component';
 
 
@@ -25,7 +27,7 @@ export class MessagesListComponent implements OnInit {
   isTyping = false;
   
   
-  constructor(private http: HttpClient, private router: Router, private dialog: MatDialog) {}
+  constructor(private http: HttpClient, private router: Router, private dialog: MatDialog, private card: MatCard) {}
 
   
   
