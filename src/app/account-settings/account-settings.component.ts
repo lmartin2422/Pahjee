@@ -22,20 +22,41 @@ export class AccountSettingsComponent implements OnInit {
   }
 
   // Method to deactivate account
+  // deactivateAccount() {
+  //   if (confirm("Are you sure you want to deactivate your account? This action cannot be undone.")) {
+  //     const userId = localStorage.getItem('user_id');
+  //     if (userId) {
+  //       // Call the API to deactivate account
+  //       this.userService.deactivateAccount(Number(userId)).subscribe(response => {
+  //         alert("Your account has been deactivated.");
+  //         this.logout();  // Logout the user after account deactivation
+  //       }, error => {
+  //         alert("Failed to deactivate account.");
+  //       });
+  //     }
+  //   }
+  // }
+
   deactivateAccount() {
-    if (confirm("Are you sure you want to deactivate your account? This action cannot be undone.")) {
-      const userId = localStorage.getItem('user_id');
-      if (userId) {
-        // Call the API to deactivate account
-        this.userService.deactivateAccount(Number(userId)).subscribe(response => {
-          alert("Your account has been deactivated.");
-          this.logout();  // Logout the user after account deactivation
-        }, error => {
-          alert("Failed to deactivate account.");
-        });
-      }
+  if (confirm("Are you sure you want to deactivate your account? This action cannot be undone.")) {
+    let userId = null;
+
+    if (typeof window !== 'undefined') {
+      userId = localStorage.getItem('user_id');
+    }
+
+    if (userId) {
+      // Call the API to deactivate account
+      this.userService.deactivateAccount(Number(userId)).subscribe(response => {
+        alert("Your account has been deactivated.");
+        this.logout();  // Logout the user after account deactivation
+      }, error => {
+        alert("Failed to deactivate account.");
+      });
     }
   }
+}
+
 
   // Method to toggle notification preferences
   toggleNotifications() {

@@ -34,7 +34,9 @@ export class UploadModalComponent {
   }
 
   uploadPictures(): void {
-    const userId = localStorage.getItem('user_id');
+    const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
+
+    // const userId = localStorage.getItem('user_id');
     if (!userId) {
       alert('User not logged in.');
       return;

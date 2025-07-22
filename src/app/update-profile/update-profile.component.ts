@@ -64,21 +64,45 @@ export class UpdateProfileComponent implements OnInit {
     });
   }
 
+  // ngOnInit(): void {
+  //   const token = localStorage.getItem('access_token');
+  //   const userId = localStorage.getItem('user_id');
+  //   if (!token || !userId) {
+  //     this.router.navigate(['/login']);
+  //     return;
+  //   }
+
+  //   this.http.get(`http://127.0.0.1:8000/users/${userId}`).subscribe((data: any) => {
+  //     this.profileForm.patchValue(data);
+  //   });
+
+  //     // Initially, show all professions
+  //   this.filteredProfessions = this.professionOptions;
+  // }
+
+
   ngOnInit(): void {
-    const token = localStorage.getItem('access_token');
-    const userId = localStorage.getItem('user_id');
-    if (!token || !userId) {
-      this.router.navigate(['/login']);
-      return;
-    }
+  let token = null;
+  let userId = null;
 
-    this.http.get(`http://127.0.0.1:8000/users/${userId}`).subscribe((data: any) => {
-      this.profileForm.patchValue(data);
-    });
-
-      // Initially, show all professions
-    this.filteredProfessions = this.professionOptions;
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('access_token');
+    userId = localStorage.getItem('user_id');
   }
+
+  if (!token || !userId) {
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  this.http.get(`http://127.0.0.1:8000/users/${userId}`).subscribe((data: any) => {
+    this.profileForm.patchValue(data);
+  });
+
+  // Initially, show all professions
+  this.filteredProfessions = this.professionOptions;
+}
+
 
     // Filter professions based on user input
 filterProfessions(event: Event): void {

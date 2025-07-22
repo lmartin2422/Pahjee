@@ -23,12 +23,21 @@ export class DirectMessagesComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
 
-  ngOnInit(): void {
-    this.userId = +(localStorage.getItem('user_id') || 0);
-    this.partnerId = +this.route.snapshot.paramMap.get('partnerId')!;
-    this.loadMessages();
-    this.loadRecipientInfo(); // 👈 Add this to load recipient profile info
-  }
+ ngOnInit(): void {
+  const storedUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
+  this.userId = storedUserId ? +storedUserId : 0;  // If storedUserId is null, fallback to 0
+  this.partnerId = +this.route.snapshot.paramMap.get('partnerId')!;
+  this.loadMessages();
+  this.loadRecipientInfo(); // 👈 Add this to load recipient profile info
+}
+
+  
+  // ngOnInit(): void {
+  //   this.userId = +(localStorage.getItem('user_id') || 0);
+  //   this.partnerId = +this.route.snapshot.paramMap.get('partnerId')!;
+  //   this.loadMessages();
+  //   this.loadRecipientInfo(); // 👈 Add this to load recipient profile info
+  // }
 
     loadRecipientInfo(): void {
       this.http.get<any>(`http://127.0.0.1:8000/users/public/${this.partnerId}`)

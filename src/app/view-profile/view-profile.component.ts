@@ -42,7 +42,9 @@ export class ViewProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-      const storedUserId = localStorage.getItem('user_id');
+      const storedUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
+
+      // const storedUserId = localStorage.getItem('user_id');
       if (storedUserId) {
         this.userId = +storedUserId;
       } else {

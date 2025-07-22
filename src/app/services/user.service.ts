@@ -13,27 +13,27 @@ export class UserService {
 
    // ✅ Use window check for SSR-safe initialization
   private usernameSubject = new BehaviorSubject<string | null>(
-    typeof window !== 'undefined' ? localStorage.getItem('username') : null
-  );
+  typeof window !== 'undefined' ? localStorage.getItem('username') : null
+);
   username$ = this.usernameSubject.asObservable();
   
   constructor(private http: HttpClient) { }
 
    // ✅ Set username after login
   setUsername(username: string) {
-     if (typeof window !== 'undefined') {
-      localStorage.setItem('username', username);
-    }
-    this.usernameSubject.next(username);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('username', username);
   }
+  this.usernameSubject.next(username);
+}
 
   // ✅ Clear username on logout
-  clearUsername() {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('username');
-    }
-    this.usernameSubject.next(null);
+ clearUsername() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('username');
   }
+  this.usernameSubject.next(null);
+}
 
   loginUser(credentials: { username: string, password: string }) {
     return this.http.post<any>(`${this.baseUrl}/login`, credentials);
