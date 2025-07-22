@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';  // Import Inject from @angular/core
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user.model';
@@ -7,35 +7,38 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
-
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';  // Import MAT_DIALOG_DATA here
+
 
 @Component({
   selector: 'app-view-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule,  MatCardModule, MatTabsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule],  // Add the Material modules
+  imports: [CommonModule, FormsModule, MatCardModule, MatTabsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule], 
   templateUrl: './view-profile.component.html',
   styleUrls: ['./view-profile.component.css']
 })
 export class ViewProfileComponent implements OnInit {
   userId: number | null = null;
-  viewedUserId!: number;        // ID of the profile being viewed
-  userData!: User;              // Data of the profile being viewed
+  viewedUserId!: number;        
+  userData!: User;              
   messageContent = '';
   isFavorite = false;
-  otherPictures: string[] = []; // Array to hold other pictures
+  otherPictures: string[] = []; 
+  selectedImage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
     private messageService: MessageService,
-    private http: HttpClient
+    private http: HttpClient,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +61,18 @@ export class ViewProfileComponent implements OnInit {
         }
       });
     }
+
+  openImageDialog(imageUrl: string): void {
+  this.selectedImage = imageUrl;
+  this.dialog.open(DialogContentComponent, {
+    data: { imageUrl: this.selectedImage }  // Pass imageUrl to dialog
+  });
+}
+
+closeImageDialog(): void {
+  this.selectedImage = null;
+  this.dialog.closeAll();  // Close all open dialogs
+}
 
 
   fetchUser(): void {
@@ -131,26 +146,45 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
-  
-
   sendMessage(): void {
-  if (this.userId === null || this.viewedUserId === null) {
-    console.error('User ID or Viewed User ID is null');
-    return;
-  }
-  const senderId = this.userId;  // Now, we know this is not null
-  const recipientId = this.viewedUserId;
-
-  this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
-    next: () => {
-      this.messageContent = '';
-      window.alert('Message sent!');
-      this.router.navigate(['/messages']);
-    },
-    error: err => {
-      window.alert('Failed to send message: ' + err.message);
+    if (this.userId === null || this.viewedUserId === null) {
+      console.error('User ID or Viewed User ID is null');
+      return;
     }
-  });
+    const senderId = this.userId;  
+    const recipientId = this.viewedUserId;
+
+    this.messageService.sendMessage(senderId, recipientId, this.messageContent).subscribe({
+      next: () => {
+        this.messageContent = '';
+        window.alert('Message sent!');
+        this.router.navigate(['/messages']);
+      },
+      error: err => {
+        window.alert('Failed to send message: ' + err.message);
+      }
+    });
+  }
 }
 
+
+
+@Component({
+  selector: 'dialog-content',
+  template: `
+    
+    <div mat-dialog-content>
+      <img [src]="data.imageUrl" alt="Enlarged Image" class="enlarged-image" />
+    </div>
+    <div mat-dialog-actions>
+      <!-- Use dialogRef.close() to close the dialog -->
+      <button mat-button (click)="dialogRef.close()">Close</button>
+    </div>
+  `,
+})
+export class DialogContentComponent {
+  constructor(
+    public dialogRef: MatDialogRef<DialogContentComponent>,  // Use MatDialogRef here
+    @Inject(MAT_DIALOG_DATA) public data: any  // Inject data from the calling component
+  ) {}
 }

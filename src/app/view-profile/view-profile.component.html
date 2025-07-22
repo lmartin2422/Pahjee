@@ -1,29 +1,17 @@
 <mat-card *ngIf="userData" class="profile-card">
   <mat-card-title>{{ userData.username }}'s profile</mat-card-title>
   <mat-card-header>
-    <!-- <mat-card-title>{{ userData.username }}'s Profile</mat-card-title> -->
-
+    <!-- Profile Picture -->
     <div mat-card-avatar class="profile-picture">
-      <!-- Profile Picture -->
       <img *ngIf="userData.profile_picture" [src]="userData.profile_picture" alt="Profile Picture" class="profile-picture-img" />
       <img *ngIf="!userData.profile_picture" src="assets/default.jpg" alt="Default Avatar" class="profile-picture-img" />
     </div>
-    
   </mat-card-header>
 
   <mat-card-content>
     <!-- Tabs for additional sections like About, Pictures, etc. -->
-    <p>
-    </p>
-    <p>
-    </p>
-    <p>
-    </p>
-
-
     <mat-tab-group>
       <mat-tab label="About">
-         <!-- <mat-icon matTabLabel>person</mat-icon> -->
         <div class="profile-info">
           <p><strong>Name:</strong> {{ userData.firstname }}</p>
           <p><strong>Looking For:</strong> {{ userData.lookingfor }}</p>
@@ -37,12 +25,14 @@
       </mat-tab>
 
       <mat-tab label="Pictures">
-        <!-- <mat-icon matTabLabel>photo_camera</mat-icon> -->
-        <!-- Display Other Pictures -->
         <div *ngIf="otherPictures.length > 0">
-          
           <div class="additional-pictures">
-            <img *ngFor="let img of otherPictures" [src]="img" alt="User's Additional Picture" class="profile-picture-img" />
+            <!-- Add click event to open image in dialog -->
+            <img *ngFor="let img of otherPictures" 
+                 [src]="img" 
+                 alt="User's Additional Picture" 
+                 class="profile-picture-img" 
+                 (click)="openImageDialog(img)" /> <!-- Here is the click event -->
           </div>
         </div>
       </mat-tab>
@@ -66,3 +56,10 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<!-- Dialog for enlarged image -->
+<mat-dialog-content *ngIf="selectedImage">
+  <!-- Set a standard size for the image in the dialog -->
+  <img [src]="selectedImage" alt="Enlarged Image" class="enlarged-image" />
+  <button mat-button (click)="closeImageDialog()">Close</button>
+</mat-dialog-content>

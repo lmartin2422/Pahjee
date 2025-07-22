@@ -83,40 +83,42 @@ export class SearchComponent implements OnInit {
   }
 
   performSearch(): void {
-      let minAge: number | null = 100;
-      let maxAge: number | null = 0;
+  let minAge: number | null = 100;
+  let maxAge: number | null = 0;
 
-      this.filters.ageRanges.forEach(range => {
-        const [min, max] = this.parseAgeRange(range);
-          if (min !== undefined && (minAge === null || min < minAge)) {
-            minAge = min;
-          }
-
-          if (max !== undefined && (maxAge === null || max > maxAge)) {
-            maxAge = max;
-          }
-      });
-
-      if (minAge === 100) minAge = null;
-      if (maxAge === 0) maxAge = null;
-
-      const payload: any = {
-        gender: this.filters.gender,
-        lookingfor: this.filters.lookingfor,
-        location: this.filters.location,
-        sexualorientation: this.filters.sexualorientation,
-        professionindustry: this.filters.professionindustry,
-        min_age: minAge,
-        max_age: maxAge
-      };
-
-      this.userService.searchUsers(payload).subscribe({
-        next: (results: any[]) => {
-          this.loadProfilePictures(results);
-        },
-        error: (err) => console.error('Search failed:', err)
-      });
+  // Process the age ranges
+  this.filters.ageRanges.forEach(range => {
+    const [min, max] = this.parseAgeRange(range);
+    if (min !== undefined && (minAge === null || min < minAge)) {
+      minAge = min;
     }
+    if (max !== undefined && (maxAge === null || max > maxAge)) {
+      maxAge = max;
+    }
+  });
+
+  if (minAge === 100) minAge = null;
+  if (maxAge === 0) maxAge = null;
+
+  // Constructing the payload
+  const payload: any = {
+    gender: this.filters.gender,
+    lookingfor: this.filters.lookingfor,
+    location: this.filters.location, // This will be an array of selected locations
+    sexualorientation: this.filters.sexualorientation,
+    professionindustry: this.filters.professionindustry,
+    min_age: minAge,
+    max_age: maxAge
+  };
+
+  // Call the backend with the search filters
+  this.userService.searchUsers(payload).subscribe({
+    next: (results: any[]) => {
+      this.loadProfilePictures(results); // Load profile pictures as needed
+    },
+    error: (err) => console.error('Search failed:', err)
+  });
+}
 
 
 

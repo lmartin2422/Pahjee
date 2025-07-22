@@ -39,3 +39,22 @@ button {
 mat-form-field {
   width: 100%; /* Form fields should take full width */
 }
+
+
+/* Ensure the dialog content doesn't exceed the size limits */
+.mat-dialog-content {
+  max-width: 90vw;  /* Make sure the dialog doesn't exceed 90% of the viewport width */
+  max-height: 80vh;  /* Ensure dialog height doesn't go beyond 80% of the viewport height */
+  overflow: hidden;  /* Hide any content that exceeds the bounds */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Enlarge image to fit within the dialog but not exceed the max size */
+.enlarged-image {
+  max-width: 100%;   /* Ensure the image width doesn't exceed the dialog size */
+  max-height: 100%;  /* Ensure the image height doesn't exceed the dialog size */
+  width: auto;       /* Maintain aspect ratio */
+  height: auto;      /* Maintain aspect ratio */
+}
