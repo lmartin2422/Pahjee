@@ -41,10 +41,16 @@ def read_root():
     return {"message": "Welcome to Pahjee API"}
 
 
+# # ✅ If running directly.... use this for development on local machine and not AWS
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
 # ✅ If running directly
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    # Update the host to 0.0.0.0 and remove reload=True for production
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)  # Set host to 0.0.0.0 for production
 
 
 
