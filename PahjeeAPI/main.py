@@ -51,28 +51,3 @@ if __name__ == "__main__":
     import uvicorn
     # Update the host to 0.0.0.0 and remove reload=True for production
     uvicorn.run("main:app", host="0.0.0.0", port=8000)  # Set host to 0.0.0.0 for production
-
-
-
-
-"""
-When restarting the API & virtual environment, run in terminal: 
-
-from this folder: 
-Desktop\Pahjee\Pahjee\PahjeeAPI
-
-run:
-PahjeeAPI-env\Scripts\Activate.ps1
-
-then:
-uvicorn main:app --reload
-
-if error, run:
-pip install uvicorn
-pip install fastapi
-uvicorn main:app --reload
-
-pip install pydantic[email]
-
-
-"""
